@@ -10,14 +10,18 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@react-router/node": "^7.13.2",
     "@tailwindcss/vite": "^4.2.2",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
-    "tailwindcss": "^4.2.2"
+    "react-router": "^7.13.2",
+    "tailwindcss": "^4.2.2",
+    "isbot": "^5"
   },
   "devDependencies": {
     "@babel/core": "^7.29.0",
     "@eslint/js": "^9.39.4",
+    "@react-router/dev": "^7.13.2",
     "@rolldown/plugin-babel": "^0.2.1",
     "@types/babel__core": "^7.20.5",
     "@types/node": "^24.12.0",
