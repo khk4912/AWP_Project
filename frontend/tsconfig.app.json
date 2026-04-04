@@ -15,9 +15,8 @@
     "moduleDetection": "force",
     "noEmit": true,
     "jsx": "react-jsx",
-    "baseUrl": ".",
     "paths": {
-      "@assets/*": ["src/assets/*"]
+      "@assets/*": ["./src/assets/*"]
     },
 
     /* Linting */
