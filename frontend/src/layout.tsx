@@ -1,4 +1,4 @@
-import { Link, Outlet } from 'react-router'
+import { Link, NavLink, Outlet } from 'react-router'
 
 import gIconSrc from '@assets/g-icon.png'
 
@@ -17,15 +17,20 @@ type LayoutItemProps = {
 }
 function LayoutItem ({ title, href, Icon }: LayoutItemProps) {
   return (
-    <Link
+    <NavLink
       to={href}
-      className='w-fit h-fit px-4 py-2 hover:bg-zinc-800 transition-colors rounded-full'
+      end={href === '/'}
+      className={({ isActive }) => (
+        `inline-flex items-center gap-4 rounded-full px-4 py-3 transition-colors ${
+          isActive
+            ? 'bg-zinc-800 text-white'
+            : 'text-zinc-300 hover:bg-zinc-800 hover:text-white'
+        }`
+      )}
     >
-      <div className='flex gap-3 items-center'>
-        <Icon className='w-6 h-6' />
-        <h3 className='text-xl'>{title}</h3>
-      </div>
-    </Link>
+      <Icon className='h-7 w-7 shrink-0 fill-current' />
+      <h3 className='text-xl'>{title}</h3>
+    </NavLink>
   )
 }
 
@@ -47,14 +52,14 @@ const Logo = () => (
 export default function Layout () {
   return (
     <div className='flex bg-black min-h-screen'>
-      <aside className='min-h-screen px-2 w-60 border-r border-zinc-600 text-white'>
-        <nav className='flex flex-col py-10 gap-6'>
+      <aside className='min-h-screen px-4 w-60 border-r border-zinc-600 text-white'>
+        <nav className='flex flex-col py-10 gap-4'>
           <Logo />
           <LayoutItem title='홈' href='/' Icon={HomeIcon} />
-          <LayoutItem title='탐색' href='/' Icon={SearchIcon} />
-          <LayoutItem title='북마크' href='/' Icon={BookmarkIcon} />
-          <LayoutItem title='채팅' href='/' Icon={ChatIcon} />
-          <LayoutItem title='프로필' href='/' Icon={ProfileIcon} />
+          <LayoutItem title='탐색' href='/search' Icon={SearchIcon} />
+          <LayoutItem title='북마크' href='/bookmark' Icon={BookmarkIcon} />
+          <LayoutItem title='채팅' href='/chat' Icon={ChatIcon} />
+          <LayoutItem title='프로필' href='/profile' Icon={ProfileIcon} />
         </nav>
       </aside>
 
