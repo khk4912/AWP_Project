@@ -20,4 +20,11 @@ export default defineConfig({
     tailwindcss(),
     babel({ presets: [reactCompilerPreset()] })
   ],
+  build: {
+    minify: 'oxc',
+    cssMinify: 'lightningcss',
+    sourcemap: false,
+    target: 'es2022',
+    assetsInlineLimit: 4096,
+  },
 })
