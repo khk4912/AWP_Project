@@ -1,3 +1,5 @@
+import { ArticleView } from './_components/ArticleView'
+
 export default function Page () {
-  return <>hi</>
+  return <ArticleView />
 }
