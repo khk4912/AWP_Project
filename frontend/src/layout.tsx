@@ -13,7 +13,7 @@ type LayoutItemProps = {
   href: string,
   Icon: React.FunctionComponent<
     React.ComponentProps<'svg'> & { title?: string, titleId?: string, desc?: string, descId?: string }
-  >;
+  >
 }
 
 const navItems: LayoutItemProps[] = [
@@ -30,15 +30,15 @@ function LayoutItem ({ title, href, Icon }: LayoutItemProps) {
       to={href}
       end={href === '/'}
       className={({ isActive }) => (
-        `inline-flex h-12 w-12 items-center justify-center rounded-full transition-colors ${
+        `flex items-center justify-center rounded-2xl transition-colors ${
           isActive
-            ? 'bg-zinc-800 text-white font-bold'
-            : 'text-zinc-300 hover:bg-zinc-800 hover:text-white'
-        } md:h-auto md:w-fit md:justify-start md:gap-4 md:px-4 md:py-3`
+            ? 'bg-bg-hover text-primary font-bold'
+            : 'text-zinc-300 hover:bg-bg-hover hover:text-white'
+        } md:h-auto md:w-full md:justify-start md:gap-4 md:px-4 md:py-3`
       )}
     >
-      <Icon className='h-7 w-7 shrink-0 fill-current' />
-      <h3 className='hidden text-xl md:block'>{title}</h3>
+      <Icon className='h-7 w-7 p-[0.125rem] shrink-0 fill-current' />
+      <h3 className='hidden text-lg md:block'>{title}</h3>
     </NavLink>
   )
 }
@@ -52,8 +52,8 @@ function MobileLayoutItem ({ title, href, Icon }: LayoutItemProps) {
       className={({ isActive }) => (
         `flex min-h-14 flex-col items-center justify-center rounded-2xl text-[11px] transition-colors ${
           isActive
-            ? 'bg-zinc-800 text-white font-bold'
-            : 'text-zinc-400 hover:bg-zinc-900 hover:text-white'
+            ? 'bg-bg text-primary font-bold'
+            : 'text-zinc-400 hover:bg-secondary hover:text-white'
         }`
       )}
     >
@@ -66,7 +66,7 @@ function MobileLayoutItem ({ title, href, Icon }: LayoutItemProps) {
 const Logo = () => (
   <Link
     to='/'
-    className='h-fit w-fit rounded-full p-2 transition-colors hover:bg-zinc-800 md:px-4 md:py-2'
+    className='h-fit w-fit rounded-full p-2 transition-colors hover:bg-bg md:px-4 md:py-2'
   >
     <img
       src={gIconSrc}
@@ -78,9 +78,10 @@ const Logo = () => (
 
 function DesktopSidebar () {
   return (
-    <aside className='hidden h-screen w-20 shrink-0 flex-col border-r border-zinc-600 px-2 text-white sm:flex md:w-60 md:px-4'>
+    <aside className='hidden h-screen w-20 shrink-0 flex-col border-r border-zinc-800 px-2 text-white sm:flex md:w-60 md:px-4'>
       <nav className='flex h-full flex-col items-center gap-3 py-3 md:items-stretch'>
         <Logo />
+        <div className='mt-4' />
         {navItems.map((item) => (
           <LayoutItem key={item.href} {...item} />
         ))}
@@ -100,7 +101,7 @@ function DesktopSidebar () {
 
 function MobileBottomNav () {
   return (
-    <nav className='fixed inset-x-0 bottom-0 z-50 border-t border-zinc-800 bg-black/95 px-2 pt-2 pb-[calc(env(safe-area-inset-bottom)+0.5rem)] backdrop-blur sm:hidden'>
+    <nav className='fixed inset-x-0 bottom-0 z-50 border-t border-zinc-800 bg-bg px-2 pt-2 pb-[calc(env(safe-area-inset-bottom)+0.5rem)] backdrop-blur sm:hidden'>
       <div className='grid grid-cols-5 gap-1'>
         {navItems.map((item) => (
           <MobileLayoutItem key={item.href} {...item} />
@@ -112,7 +113,7 @@ function MobileBottomNav () {
 
 export default function Layout () {
   return (
-    <div className='flex h-screen overflow-hidden bg-black'>
+    <div className='flex h-screen overflow-hidden bg-bg text-white'>
       <DesktopSidebar />
 
       <main className='min-w-0 flex-1 overflow-y-auto pb-[calc(env(safe-area-inset-bottom)+5rem)] sm:pb-0'>
