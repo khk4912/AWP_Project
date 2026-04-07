@@ -15,21 +15,50 @@ type LayoutItemProps = {
     React.ComponentProps<'svg'> & { title?: string, titleId?: string, desc?: string, descId?: string }
   >;
 }
+
+const navItems: LayoutItemProps[] = [
+  { title: '홈', href: '/', Icon: HomeIcon },
+  { title: '탐색', href: '/search', Icon: SearchIcon },
+  { title: '북마크', href: '/bookmark', Icon: BookmarkIcon },
+  { title: '채팅', href: '/chat', Icon: ChatIcon },
+  { title: '프로필', href: '/profile', Icon: ProfileIcon },
+]
+
 function LayoutItem ({ title, href, Icon }: LayoutItemProps) {
   return (
     <NavLink
       to={href}
       end={href === '/'}
       className={({ isActive }) => (
-        `inline-flex w-fit items-center gap-4 rounded-full px-4 py-3 transition-colors not-md:h-12 not-md:w-12 not-md:justify-center not-md:gap-0 not-md:px-0 ${
+        `inline-flex h-12 w-12 items-center justify-center rounded-full transition-colors ${
           isActive
             ? 'bg-zinc-800 text-white font-bold'
             : 'text-zinc-300 hover:bg-zinc-800 hover:text-white'
-        }`
+        } md:h-auto md:w-fit md:justify-start md:gap-4 md:px-4 md:py-3`
       )}
     >
       <Icon className='h-7 w-7 shrink-0 fill-current' />
-      <h3 className='text-xl not-md:hidden'>{title}</h3>
+      <h3 className='hidden text-xl md:block'>{title}</h3>
+    </NavLink>
+  )
+}
+
+function MobileLayoutItem ({ title, href, Icon }: LayoutItemProps) {
+  return (
+    <NavLink
+      to={href}
+      end={href === '/'}
+      aria-label={title}
+      className={({ isActive }) => (
+        `flex min-h-14 flex-col items-center justify-center rounded-2xl text-[11px] transition-colors ${
+          isActive
+            ? 'bg-zinc-800 text-white font-bold'
+            : 'text-zinc-400 hover:bg-zinc-900 hover:text-white'
+        }`
+      )}
+    >
+      <Icon className='mb-1 h-5 w-5 shrink-0 fill-current' />
+      <span>{title}</span>
     </NavLink>
   )
 }
@@ -37,9 +66,7 @@ function LayoutItem ({ title, href, Icon }: LayoutItemProps) {
 const Logo = () => (
   <Link
     to='/'
-    className='w-fit h-fit px-4 py-2 not-md:p-2
-             hover:bg-zinc-800 transition-colors
-               rounded-full'
+    className='h-fit w-fit rounded-full p-2 transition-colors hover:bg-zinc-800 md:px-4 md:py-2'
   >
     <img
       src={gIconSrc}
@@ -49,34 +76,50 @@ const Logo = () => (
   </Link>
 )
 
-export default function Layout () {
+function DesktopSidebar () {
   return (
-    <div className='flex bg-black min-h-screen '>
-      <aside className='h-screen w-60 shrink-0 px-4 sticky top-0
-                        not-md:w-20 not-md:px-2
-                        flex flex-col border-r border-zinc-600 text-white'
-      >
-        <nav className='h-full flex flex-col gap-3 py-3 not-md:items-center'>
-          <Logo />
-          <LayoutItem title='홈' href='/' Icon={HomeIcon} />
-          <LayoutItem title='탐색' href='/search' Icon={SearchIcon} />
-          <LayoutItem title='북마크' href='/bookmark' Icon={BookmarkIcon} />
-          <LayoutItem title='채팅' href='/chat' Icon={ChatIcon} />
-          <LayoutItem title='프로필' href='/profile' Icon={ProfileIcon} />
-          <div className='mt-auto not-md:flex not-md:w-full not-md:justify-center'>
-            <div className='flex items-center gap-3 rounded-2xl border-2 border-zinc-800 px-4 py-2 not-md:h-12 not-md:w-12 not-md:justify-center not-md:gap-0 not-md:px-0'>
-              <ProfileIcon className='w-6' />
-              <div className='not-md:hidden'>
-                <p className='text-sm text-zinc-300'>프로필</p>
-                <p className='text-sm text-zinc-500'>@profile</p>
-              </div>
+    <aside className='hidden h-screen w-20 shrink-0 flex-col border-r border-zinc-600 px-2 text-white sm:flex md:w-60 md:px-4'>
+      <nav className='flex h-full flex-col items-center gap-3 py-3 md:items-stretch'>
+        <Logo />
+        {navItems.map((item) => (
+          <LayoutItem key={item.href} {...item} />
+        ))}
+        <div className='mt-auto flex w-full md:block'>
+          <div className='flex h-12 w-12 items-center rounded-2xl border-2 border-zinc-800 md:h-auto md:w-auto md:gap-3 md:px-4 md:py-2'>
+            <ProfileIcon className='w-6 shrink-0' />
+            <div className='hidden md:block'>
+              <p className='text-sm text-zinc-300'>프로필</p>
+              <p className='text-sm text-zinc-500'>@profile</p>
             </div>
           </div>
-        </nav>
-      </aside>
+        </div>
+      </nav>
+    </aside>
+  )
+}
 
-      <Outlet />
+function MobileBottomNav () {
+  return (
+    <nav className='fixed inset-x-0 bottom-0 z-50 border-t border-zinc-800 bg-black/95 px-2 pt-2 pb-[calc(env(safe-area-inset-bottom)+0.5rem)] backdrop-blur sm:hidden'>
+      <div className='grid grid-cols-5 gap-1'>
+        {navItems.map((item) => (
+          <MobileLayoutItem key={item.href} {...item} />
+        ))}
+      </div>
+    </nav>
+  )
+}
 
+export default function Layout () {
+  return (
+    <div className='flex h-screen overflow-hidden bg-black'>
+      <DesktopSidebar />
+
+      <main className='min-w-0 flex-1 overflow-y-auto pb-[calc(env(safe-area-inset-bottom)+5rem)] sm:pb-0'>
+        <Outlet />
+      </main>
+
+      <MobileBottomNav />
     </div>
   )
 }
