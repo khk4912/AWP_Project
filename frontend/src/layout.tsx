@@ -34,10 +34,10 @@ function LayoutItem ({ title, href, Icon }: LayoutItemProps) {
           isActive
             ? 'bg-bg-hover text-primary font-bold'
             : 'text-zinc-300 hover:bg-bg-hover hover:text-white'
-        } md:h-auto md:w-full md:justify-start md:gap-4 md:px-4 md:py-3`
+        } md:h-auto md:w-full md:justify-start md:gap-4 p-3 rounded-full md:px-4 md:py-3`
       )}
     >
-      <Icon className='h-7 w-7 p-[0.125rem] shrink-0 fill-current' />
+      <Icon className='h-7 w-7 p-0.5 shrink-0 fill-current' />
       <h3 className='hidden text-lg md:block'>{title}</h3>
     </NavLink>
   )
@@ -79,7 +79,7 @@ const Logo = () => (
 function DesktopSidebar () {
   return (
     <aside className='hidden h-screen w-20 shrink-0 flex-col border-r border-zinc-800 px-2 text-white sm:flex md:w-60 md:px-4'>
-      <nav className='flex h-full flex-col items-center gap-3 py-3 md:items-stretch'>
+      <nav className='flex h-full flex-col items-center gap-4 md:gap-4 md:items-stretch'>
         <Logo />
         <div className='mt-4' />
         {navItems.map((item) => (
