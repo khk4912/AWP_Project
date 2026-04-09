@@ -1,3 +1,5 @@
+import { MainHeader } from './MainHeader'
+
 type ArticleProps = {
   profileImage: string,
   nickname: string,
@@ -95,17 +97,14 @@ export function ArticleView () {
     <main className='flex-1
                    text-white '
     >
-      {/* px-5 */}
-      <section className='bg-secondary px-8 py-4 flex items-center justify-between mb-8 sticky top-0'>
-        <h1 className='text-2xl font-bold'>홈</h1>
-
-        <div className=''>
+      <MainHeader title='홈'>
+        <div>
           <input
             className='bg-bg py-2 px-6 rounded-2xl'
             type='text' placeholder='검색어를 입력하세요...'
           />
         </div>
-      </section>
+      </MainHeader>
 
       <section className='mx-20 flex flex-col mb-8 not-sm:mx-4'>
         <div className='flex flex-col gap-10 bg-secondary rounded-2xl border border-zinc-800 px-12 not-sm:px-4 py-8 mb-8'>
@@ -130,26 +129,26 @@ export function ArticleView () {
                      divide-y divide-zinc-700'
       >
 
-        <Article profileImage='https://avatars.githubusercontent.com/u/583231?v=4' nickname='octocat' date='2024-06-01' content='Article content 1' />
-        <Article profileImage='https://avatars.githubusercontent.com/u/583231?v=4' nickname='octocat' date='2024-06-01' content='Article content 2' />
-        <Article profileImage='https://avatars.githubusercontent.com/u/583231?v=4' nickname='octocat' date='2024-06-01' content='Article content 3' />
-        <Article profileImage='https://avatars.githubusercontent.com/u/583231?v=4' nickname='octocat' date='2024-06-01' content='Article content 4' />
-        <Article profileImage='https://avatars.githubusercontent.com/u/583231?v=4' nickname='octocat' date='2024-06-01' content='Article content 5' />
-        <Article profileImage='https://avatars.githubusercontent.com/u/583231?v=4' nickname='octocat' date='2024-06-01' content='Article content 1' />
-        <Article profileImage='https://avatars.githubusercontent.com/u/583231?v=4' nickname='octocat' date='2024-06-01' content='Article content 2' />
-        <Article profileImage='https://avatars.githubusercontent.com/u/583231?v=4' nickname='octocat' date='2024-06-01' content='Article content 3' />
-        <Article profileImage='https://avatars.githubusercontent.com/u/583231?v=4' nickname='octocat' date='2024-06-01' content='Article content 4' />
-        <Article profileImage='https://avatars.githubusercontent.com/u/583231?v=4' nickname='octocat' date='2024-06-01' content='Article content 5' />
-        <Article profileImage='https://avatars.githubusercontent.com/u/583231?v=4' nickname='octocat' date='2024-06-01' content='Article content 1' />
-        <Article profileImage='https://avatars.githubusercontent.com/u/583231?v=4' nickname='octocat' date='2024-06-01' content='Article content 2' />
-        <Article profileImage='https://avatars.githubusercontent.com/u/583231?v=4' nickname='octocat' date='2024-06-01' content='Article content 3' />
-        <Article profileImage='https://avatars.githubusercontent.com/u/583231?v=4' nickname='octocat' date='2024-06-01' content='Article content 4' />
-        <Article profileImage='https://avatars.githubusercontent.com/u/583231?v=4' nickname='octocat' date='2024-06-01' content='Article content 5' />
-        <Article profileImage='https://avatars.githubusercontent.com/u/583231?v=4' nickname='octocat' date='2024-06-01' content='Article content 1' />
-        <Article profileImage='https://avatars.githubusercontent.com/u/583231?v=4' nickname='octocat' date='2024-06-01' content='Article content 2' />
-        <Article profileImage='https://avatars.githubusercontent.com/u/583231?v=4' nickname='octocat' date='2024-06-01' content='Article content 3' />
-        <Article profileImage='https://avatars.githubusercontent.com/u/583231?v=4' nickname='octocat' date='2024-06-01' content='Article content 4' />
-        <Article profileImage='https://avatars.githubusercontent.com/u/583231?v=4' nickname='octocat' date='2024-06-01' content='Article content 5' />
+        <Article profileImage='https://avatars.githubusercontent.com/u/583231?v=4' nickname='John Doe' date='2024-06-01' content='Article content 1' />
+        <Article profileImage='https://avatars.githubusercontent.com/u/583231?v=4' nickname='John Doe' date='2024-06-01' content='Article content 2' />
+        <Article profileImage='https://avatars.githubusercontent.com/u/583231?v=4' nickname='John Doe' date='2024-06-01' content='Article content 3' />
+        <Article profileImage='https://avatars.githubusercontent.com/u/583231?v=4' nickname='John Doe' date='2024-06-01' content='Article content 4' />
+        <Article profileImage='https://avatars.githubusercontent.com/u/583231?v=4' nickname='John Doe' date='2024-06-01' content='Article content 5' />
+        <Article profileImage='https://avatars.githubusercontent.com/u/583231?v=4' nickname='John Doe' date='2024-06-01' content='Article content 1' />
+        <Article profileImage='https://avatars.githubusercontent.com/u/583231?v=4' nickname='John Doe' date='2024-06-01' content='Article content 2' />
+        <Article profileImage='https://avatars.githubusercontent.com/u/583231?v=4' nickname='John Doe' date='2024-06-01' content='Article content 3' />
+        <Article profileImage='https://avatars.githubusercontent.com/u/583231?v=4' nickname='John Doe' date='2024-06-01' content='Article content 4' />
+        <Article profileImage='https://avatars.githubusercontent.com/u/583231?v=4' nickname='John Doe' date='2024-06-01' content='Article content 5' />
+        <Article profileImage='https://avatars.githubusercontent.com/u/583231?v=4' nickname='John Doe' date='2024-06-01' content='Article content 1' />
+        <Article profileImage='https://avatars.githubusercontent.com/u/583231?v=4' nickname='John Doe' date='2024-06-01' content='Article content 2' />
+        <Article profileImage='https://avatars.githubusercontent.com/u/583231?v=4' nickname='John Doe' date='2024-06-01' content='Article content 3' />
+        <Article profileImage='https://avatars.githubusercontent.com/u/583231?v=4' nickname='John Doe' date='2024-06-01' content='Article content 4' />
+        <Article profileImage='https://avatars.githubusercontent.com/u/583231?v=4' nickname='John Doe' date='2024-06-01' content='Article content 5' />
+        <Article profileImage='https://avatars.githubusercontent.com/u/583231?v=4' nickname='John Doe' date='2024-06-01' content='Article content 1' />
+        <Article profileImage='https://avatars.githubusercontent.com/u/583231?v=4' nickname='John Doe' date='2024-06-01' content='Article content 2' />
+        <Article profileImage='https://avatars.githubusercontent.com/u/583231?v=4' nickname='John Doe' date='2024-06-01' content='Article content 3' />
+        <Article profileImage='https://avatars.githubusercontent.com/u/583231?v=4' nickname='John Doe' date='2024-06-01' content='Article content 4' />
+        <Article profileImage='https://avatars.githubusercontent.com/u/583231?v=4' nickname='John Doe' date='2024-06-01' content='Article content 5' />
       </section>
     </main>
   )
