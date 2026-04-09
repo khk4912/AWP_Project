@@ -6,8 +6,10 @@
 }
 
 @theme {
-  --color-secondary: #1B1B1B;
+  /* --color-secondary: #1B1B1B; */
+  --color-secondary: #101010;
   --color-primary: #2dabff;
-  --color-bg: #131313;
+  /* --color-bg: #131313; */
+  --color-bg: black;
   --color-bg-hover: #2a2a2a;
 }
