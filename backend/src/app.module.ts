@@ -3,6 +3,8 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { PostsModule } from './posts/posts.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -13,6 +15,10 @@ import { AppService } from './app.service';
     
     // 2. MongoDB 로컬 서버에 연결 ('sns-database'라는 이름의 DB를 자동 생성/사용)
     MongooseModule.forRoot('mongodb://localhost:27017/sns-database'),
+    
+    PostsModule,
+    
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
