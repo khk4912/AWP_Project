@@ -1,22 +1,20 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document } from 'mongoose';
+import { Post } from '../../posts/schemas/post.schema';
 import { User } from '../../users/schemas/user.schema';
 
-export type PostDocument = Post & Document;
+export type CommentDocument = Comment & Document;
 
 @Schema({ timestamps: true })
-export class Post {
+export class Comment {
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Post', required: true })
+  post!: Post;
+
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true })
   author!: User;
 
   @Prop({ required: true })
   content!: string;
-
-  @Prop({ default: '' })
-  imageUrl!: string;
-
-  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }], default: [] })
-  likedBy!: User[];
 }
 
-export const PostSchema = SchemaFactory.createForClass(Post);
+export const CommentSchema = SchemaFactory.createForClass(Comment);

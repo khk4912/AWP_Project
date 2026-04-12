@@ -1,24 +1,23 @@
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
+import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { AuthModule } from './auth/auth.module';
+import { CommentsModule } from './comments/comments.module';
+import { FollowModule } from './follow/follow.module';
 import { PostsModule } from './posts/posts.module';
 import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
-    // 1. 환경변수 설정 (전역에서 사용 가능하게)
-    ConfigModule.forRoot({
-      isGlobal: true,
-    }),
-    
-    // 2. MongoDB 로컬 서버에 연결 ('sns-database'라는 이름의 DB를 자동 생성/사용)
-    MongooseModule.forRoot('mongodb://localhost:27017/sns-database'),
-    
+    ConfigModule.forRoot({ isGlobal: true }),
+    MongooseModule.forRoot(process.env.MONGO_URI ?? 'mongodb://localhost:27017/sns-database'),
     PostsModule,
-    
     UsersModule,
+    AuthModule,
+    CommentsModule,
+    FollowModule,
   ],
   controllers: [AppController],
   providers: [AppService],
