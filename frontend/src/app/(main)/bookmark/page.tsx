@@ -1,4 +1,4 @@
-import { MainHeader } from '../_components/MainHeader'
+import { MainHeader } from '@/components/MainHeader'
 
 export default function BookmarkPage () {
   return (
@@ -11,7 +11,6 @@ export default function BookmarkPage () {
           />
         </div>
       </MainHeader>
-
     </main>
   )
 }
