@@ -1,14 +1,12 @@
-import { FeedSection } from './FeedSection'
 import { MainHeader } from './MainHeader'
 
 type ArticleProps = {
-  profileImage: string,
-  nickname: string,
-  date: string,
-  content: string,
-  // TODO: image, video, etc.
-  // attachments: any[],
+  profileImage: string
+  nickname: string
+  date: string
+  content: string
 }
+
 function Article ({ profileImage, nickname, date, content }: ArticleProps) {
   return (
     <article className='px-4 py-5 sm:px-8 sm:py-6 lg:px-12'>
@@ -95,9 +93,7 @@ function Article ({ profileImage, nickname, date, content }: ArticleProps) {
 
 export function ArticleView () {
   return (
-    <main className='flex-1
-                   text-white '
-    >
+    <main className='flex-1 text-white'>
       <MainHeader title='홈'>
         <div>
           <input
@@ -107,23 +103,22 @@ export function ArticleView () {
         </div>
       </MainHeader>
 
-      <section className='mx-20 mb-8 flex flex-col not-sm:mx-4'>
-        <div className='mb-8 flex flex-col gap-10 rounded-2xl border border-zinc-800 bg-secondary px-12 py-8 not-sm:px-4'>
+      <section className='mx-20 flex flex-col mb-8 not-sm:mx-4'>
+        <div className='flex flex-col gap-10 bg-secondary rounded-2xl border border-zinc-800 px-12 not-sm:px-4 py-8 mb-8'>
           <div className='flex gap-8'>
-            <img src='https://avatars.githubusercontent.com/u/583231?v=4' alt='Profile Image' className='mb-2 h-10 w-10 rounded-full' />
-            <div className='flex w-full flex-col gap-4 divide-y divide-zinc-800'>
+            <img src='https://avatars.githubusercontent.com/u/583231?v=4' alt='Profile Image' className='w-10 h-10 rounded-full mb-2' />
+            <div className='flex flex-col gap-4 divide-y divide-zinc-800 w-full'>
               <textarea
-                className='h-30 resize-none bg-transparent text-white placeholder:text-gray-500 focus:outline-none'
+                className='bg-transparent text-white placeholder:text-gray-500 focus:outline-none resize-none h-30'
                 placeholder='무슨 일이 일어나고 있나요?'
               />
-              <button className='mt-2 self-end rounded-2xl bg-primary px-4 py-2 text-white'>게시</button>
+              <button className='bg-primary text-white px-4 py-2 rounded-2xl self-end mt-2'>게시</button>
             </div>
           </div>
         </div>
       </section>
 
-      <FeedSection mobileSpacing='flush'>
-
+      <section className='mx-20 not-sm:mx-0 bg-secondary rounded-2xl border border-zinc-800 divide-y divide-zinc-700'>
         <Article profileImage='https://avatars.githubusercontent.com/u/583231?v=4' nickname='John Doe' date='2024-06-01' content='Article content 1' />
         <Article profileImage='https://avatars.githubusercontent.com/u/583231?v=4' nickname='John Doe' date='2024-06-01' content='Article content 2' />
         <Article profileImage='https://avatars.githubusercontent.com/u/583231?v=4' nickname='John Doe' date='2024-06-01' content='Article content 3' />
@@ -144,7 +139,7 @@ export function ArticleView () {
         <Article profileImage='https://avatars.githubusercontent.com/u/583231?v=4' nickname='John Doe' date='2024-06-01' content='Article content 3' />
         <Article profileImage='https://avatars.githubusercontent.com/u/583231?v=4' nickname='John Doe' date='2024-06-01' content='Article content 4' />
         <Article profileImage='https://avatars.githubusercontent.com/u/583231?v=4' nickname='John Doe' date='2024-06-01' content='Article content 5' />
-      </FeedSection>
+      </section>
     </main>
   )
 }
