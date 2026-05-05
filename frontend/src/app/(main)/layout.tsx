@@ -6,7 +6,6 @@ import {
   Bookmark,
   CircleUserRound,
   Home,
-  Menu,
   MessageCircle,
   Search,
   type LucideIcon,
@@ -36,7 +35,7 @@ function LayoutItem ({ title, href, Icon }: LayoutItemProps) {
   return (
     <Link
       href={href}
-      className={`group flex items-center justify-center gap-0 rounded-full px-2 py-2 transition-colors lg:w-full lg:justify-start lg:gap-3 lg:px-0 ${
+      className={`group flex w-full items-center gap-3 rounded-full py-1.5 text-[16px] transition-colors ${
         isActive
           ? 'text-white'
           : 'text-zinc-400 hover:text-white'
@@ -45,7 +44,7 @@ function LayoutItem ({ title, href, Icon }: LayoutItemProps) {
       <span className={`inline-flex size-11 items-center justify-center rounded-full transition-colors ${isActive ? 'bg-white/10 text-white' : 'group-hover:bg-white/10'}`}>
         <Icon className='size-[23px] shrink-0' strokeWidth={isActive ? 2.5 : 2} />
       </span>
-      <h3 className={`hidden text-[16px] leading-none lg:block ${isActive ? 'font-semibold' : 'font-normal'}`}>{title}</h3>
+      <h3 className={`leading-none ${isActive ? 'font-semibold' : 'font-normal'}`}>{title}</h3>
     </Link>
   )
 }
@@ -89,25 +88,19 @@ function Logo () {
 
 function DesktopSidebar () {
   return (
-    <aside className='hidden h-screen w-[86px] shrink-0 flex-col border-r border-border-subtle bg-bg px-4 py-[30px] text-white sm:flex lg:w-[188px] lg:px-6'>
-      <nav className='flex h-full flex-col items-center lg:items-stretch'>
+    <aside className='hidden h-screen w-[188px] shrink-0 flex-col border-r border-border-subtle bg-bg px-6 py-[30px] text-white lg:flex'>
+      <nav className='flex h-full flex-col items-stretch'>
         <Logo />
-        <div className='mt-5 flex flex-col gap-2 lg:gap-3'>
+        <div className='mt-4 flex flex-col gap-1.5'>
           {navItems.map((item) => (
             <LayoutItem key={item.href} {...item} />
           ))}
         </div>
-        <div className='mt-auto flex w-full justify-center lg:justify-start'>
-          <button
-            type='button'
-            className='group flex items-center justify-center gap-0 rounded-full px-2 py-2 text-zinc-400 transition-colors hover:text-white lg:w-full lg:justify-start lg:gap-3 lg:px-0'
-          >
-            <span className='inline-flex size-11 items-center justify-center rounded-full transition-colors group-hover:bg-white/10'>
-              <Menu className='size-[23px]' strokeWidth={2} />
-            </span>
-            <span className='hidden text-[16px] leading-none lg:block'>더보기</span>
-          </button>
+        {/*
+        <div className='mt-auto flex w-full justify-start'>
+          <button type='button'>더보기</button>
         </div>
+        */}
       </nav>
     </aside>
   )
@@ -115,7 +108,7 @@ function DesktopSidebar () {
 
 function MobileBottomNav () {
   return (
-    <nav className='fixed inset-x-0 bottom-0 z-50 border-t border-border-subtle bg-bg/95 px-2 pt-2 pb-[calc(env(safe-area-inset-bottom)+0.5rem)] backdrop-blur sm:hidden'>
+    <nav className='fixed inset-x-0 bottom-0 z-50 border-t border-border-subtle bg-bg/95 px-2 pt-2 pb-[calc(env(safe-area-inset-bottom)+0.5rem)] backdrop-blur lg:hidden'>
       <div className='grid grid-cols-5 gap-1'>
         {navItems.map((item) => (
           <MobileLayoutItem key={item.href} {...item} />
@@ -130,7 +123,7 @@ export default function Layout ({ children }: { children: React.ReactNode }) {
     <div className='flex h-screen overflow-hidden bg-bg text-text-primary'>
       <DesktopSidebar />
 
-      <main className='min-w-0 flex-1 overflow-y-auto pb-[calc(env(safe-area-inset-bottom)+5rem)] sm:pb-0'>
+      <main className='min-w-0 flex-1 overflow-y-auto pb-[calc(env(safe-area-inset-bottom)+5rem)] lg:pb-0'>
         {children}
       </main>
 

@@ -1,4 +1,3 @@
-import { RightRail } from './RightRail'
 import { ThreadComposer } from './ThreadComposer'
 import { ThreadPost } from './ThreadPost'
 
@@ -44,9 +43,9 @@ const posts = [
 
 export function ArticleView () {
   return (
-    <div className='mx-auto grid min-h-full w-full max-w-[1060px] grid-cols-1 gap-8 px-0 lg:px-8 xl:grid-cols-[minmax(0,620px)_256px] xl:gap-16'>
+    <div className='mx-auto min-h-full w-full max-w-[620px] px-0 lg:px-8'>
       <section className='min-w-0 sm:py-0'>
-        <header className='sticky top-0 z-10 flex h-14 items-center border-b border-border-subtle bg-bg/95 px-4 backdrop-blur sm:hidden'>
+        <header className='sticky top-0 z-10 flex h-14 items-center border-b border-border-subtle bg-bg/95 px-4 backdrop-blur lg:hidden'>
           <h1 className='text-[18px] font-bold text-text-primary'>홈</h1>
         </header>
         <ThreadComposer />
@@ -60,7 +59,7 @@ export function ArticleView () {
           ))}
         </section>
       </section>
-      <RightRail />
+      {/* <RightRail /> */}
     </div>
   )
 }
