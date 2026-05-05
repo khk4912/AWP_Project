@@ -1,16 +1,10 @@
-import { MainHeader } from '@/components/MainHeader'
+import { EmptyPage } from '@/components/EmptyPage'
 
 export default function BookmarkPage () {
   return (
-    <main className='flex-1 text-white'>
-      <MainHeader title='북마크'>
-        <div>
-          <input
-            className='bg-bg py-2 px-6 rounded-2xl'
-            type='text' placeholder='검색어를 입력하세요...'
-          />
-        </div>
-      </MainHeader>
-    </main>
+    <EmptyPage
+      title='북마크'
+      description='나중에 다시 보고 싶은 게시글을 이곳에서 모아볼 수 있습니다.'
+    />
   )
 }

@@ -1,9 +1,10 @@
-import { MainHeader } from '@/components/MainHeader'
+import { EmptyPage } from '@/components/EmptyPage'
 
 export default function ProfilePage () {
   return (
-    <main className='flex-1 text-white'>
-      <MainHeader title='프로필' />
-    </main>
+    <EmptyPage
+      title='프로필'
+      description='내 소개와 활동 기록을 정리해 보여줄 프로필 화면입니다.'
+    />
   )
 }

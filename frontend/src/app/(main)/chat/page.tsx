@@ -1,9 +1,10 @@
-import { MainHeader } from '@/components/MainHeader'
+import { EmptyPage } from '@/components/EmptyPage'
 
 export default function ChatPage () {
   return (
-    <main className='flex-1 text-white'>
-      <MainHeader title='채팅' />
-    </main>
+    <EmptyPage
+      title='채팅'
+      description='Z에서 이어지는 대화를 한눈에 확인할 수 있는 공간입니다.'
+    />
   )
 }

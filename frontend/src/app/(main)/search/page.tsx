@@ -1,9 +1,10 @@
-import { MainHeader } from '@/components/MainHeader'
+import { EmptyPage } from '@/components/EmptyPage'
 
 export default function SearchPage () {
   return (
-    <main className='flex-1 text-white'>
-      <MainHeader title='탐색' />
-    </main>
+    <EmptyPage
+      title='탐색'
+      description='관심 있는 사용자와 대화를 찾을 수 있는 공간입니다.'
+    />
   )
 }
