@@ -1,145 +1,66 @@
-import { MainHeader } from './MainHeader'
+import { RightRail } from './RightRail'
+import { ThreadComposer } from './ThreadComposer'
+import { ThreadPost } from './ThreadPost'
 
-type ArticleProps = {
-  profileImage: string
-  nickname: string
-  date: string
-  content: string
-}
-
-function Article ({ profileImage, nickname, date, content }: ArticleProps) {
-  return (
-    <article className='px-4 py-5 sm:px-8 sm:py-6 lg:px-12'>
-      <div className='flex items-start gap-4'>
-        <div className='flex shrink-0 flex-col items-center'>
-          <img
-            src={profileImage}
-            alt='Profile Image'
-            className='h-11 w-11 rounded-full object-cover'
-          />
-          <div className='mt-3 h-full w-px bg-zinc-800' />
-        </div>
-
-        <div className='min-w-0 flex-1'>
-          <header className='flex items-start justify-between gap-2'>
-            <div className='min-w-0'>
-              <div className='flex flex-wrap items-center gap-x-2'>
-                <h2 className='truncate text-[15px] font-semibold text-white'>{nickname}</h2>
-                <time className='text-sm text-zinc-500'>{date}</time>
-              </div>
-            </div>
-
-            <button
-              type='button'
-              aria-label='더보기'
-              className='inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-zinc-500 transition-colors hover:bg-white/5 hover:text-white'
-            >
-              <svg viewBox='0 0 24 24' fill='currentColor' className='h-4 w-4' aria-hidden='true'>
-                <circle cx='6' cy='12' r='1.5' />
-                <circle cx='12' cy='12' r='1.5' />
-                <circle cx='18' cy='12' r='1.5' />
-              </svg>
-            </button>
-          </header>
-
-          <p className='text-[15px] leading-6 text-zinc-300'>
-            {content}
-          </p>
-
-          <footer className='mt-4 flex items-center gap-1 text-zinc-500'>
-            <button
-              type='button'
-              aria-label='좋아요'
-              className='inline-flex h-9 w-9 items-center justify-center rounded-full transition-colors hover:bg-white/5 hover:text-white'
-            >
-              <svg viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='1.8' className='h-4 w-4' aria-hidden='true'>
-                <path strokeLinecap='round' strokeLinejoin='round' d='m12 20.25-1.23-1.12C5.55 14.4 2.25 11.39 2.25 7.69A4.44 4.44 0 0 1 6.75 3.2c2 0 3.16.98 4.04 2.02.88-1.04 2.04-2.02 4.04-2.02a4.44 4.44 0 0 1 4.42 4.49c0 3.7-3.3 6.71-8.52 11.44L12 20.25Z' />
-              </svg>
-            </button>
-            <button
-              type='button'
-              aria-label='댓글'
-              className='inline-flex h-9 w-9 items-center justify-center rounded-full transition-colors hover:bg-white/5 hover:text-white'
-            >
-              <svg viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='1.8' className='h-4 w-4' aria-hidden='true'>
-                <path strokeLinecap='round' strokeLinejoin='round' d='M8 18.5c-2.76 0-5-2.01-5-4.5s2.24-4.5 5-4.5h8c2.76 0 5 2.01 5 4.5s-2.24 4.5-5 4.5H8Zm0 0L4.5 21v-2.5' />
-              </svg>
-            </button>
-            <button
-              type='button'
-              aria-label='리포스트'
-              className='inline-flex h-9 w-9 items-center justify-center rounded-full transition-colors hover:bg-white/5 hover:text-white'
-            >
-              <svg viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='1.8' className='h-4 w-4' aria-hidden='true'>
-                <path strokeLinecap='round' strokeLinejoin='round' d='M17 7h-8.5A3.5 3.5 0 0 0 5 10.5V11m0 0 2.5-2.5M5 11l2.5 2.5' />
-                <path strokeLinecap='round' strokeLinejoin='round' d='M7 17h8.5a3.5 3.5 0 0 0 3.5-3.5V13m0 0L16.5 15.5M19 13l-2.5-2.5' />
-              </svg>
-            </button>
-            <button
-              type='button'
-              aria-label='공유'
-              className='inline-flex h-9 w-9 items-center justify-center rounded-full transition-colors hover:bg-white/5 hover:text-white'
-            >
-              <svg viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='1.8' className='h-4 w-4' aria-hidden='true'>
-                <path strokeLinecap='round' strokeLinejoin='round' d='M7.5 12.75 16.5 7.5m-9 4.75 9 5.25M18.5 8.25a2.25 2.25 0 1 0 0-4.5 2.25 2.25 0 0 0 0 4.5ZM18.5 20.25a2.25 2.25 0 1 0 0-4.5 2.25 2.25 0 0 0 0 4.5ZM5.5 15a2.25 2.25 0 1 0 0-4.5 2.25 2.25 0 0 0 0 4.5Z' />
-              </svg>
-            </button>
-          </footer>
-        </div>
-      </div>
-    </article>
-  )
-}
+const posts = [
+  {
+    author: '도널드밀리',
+    avatarUrl: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=120&q=80',
+    content: '오늘 팔로워 4,000명을 넘겼어요. 고맙습니다.\n이번 주에는 실시간 AR 퍼펫 실험을 Z에 먼저 공유해볼게요.',
+    likeCount: '3.2만',
+    replyCount: '2,342',
+    time: '8시간',
+    verified: true,
+  },
+  {
+    author: '시니컬한_사용자',
+    avatarUrl: 'https://images.unsplash.com/photo-1527980965255-d3b416303d12?auto=format&fit=crop&w=120&q=80',
+    content: 'Z에서 보는 첫 번째 밈. 어두운 화면에 집중되는 피드가 생각보다 편하네요.',
+    imageUrl: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1200&q=80',
+    likeCount: '1.2만',
+    replyCount: '640',
+    time: '12시간',
+    verified: true,
+  },
+  {
+    author: '나스데일리',
+    avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&q=80',
+    content: '오늘은 바다 위에 세워진 작은 구조물 이야기를 읽었어요.\n누군가에게는 버려진 공간이지만, 다른 누군가에게는 완전히 새로운 시작점이 될 수 있더라고요.',
+    likeCount: '3천',
+    replyCount: '72',
+    time: '1일',
+    verified: true,
+  },
+  {
+    author: '테크리뷰어',
+    avatarUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=120&q=80',
+    content: '짧은 글을 쓰기 좋은 SNS는 결국 첫 화면의 밀도가 결정하는 것 같아요.',
+    likeCount: '4.7천',
+    replyCount: '345',
+    time: '1일',
+    verified: true,
+  },
+]
 
 export function ArticleView () {
   return (
-    <main className='flex-1 text-white'>
-      <MainHeader title='홈'>
-        <div>
-          <input
-            className='bg-bg py-2 px-6 rounded-2xl'
-            type='text' placeholder='검색어를 입력하세요...'
-          />
-        </div>
-      </MainHeader>
-
-      <section className='mx-20 flex flex-col mb-8 not-sm:mx-4'>
-        <div className='flex flex-col gap-10 bg-secondary rounded-2xl border border-zinc-800 px-12 not-sm:px-4 py-8 mb-8'>
-          <div className='flex gap-8'>
-            <img src='https://avatars.githubusercontent.com/u/583231?v=4' alt='Profile Image' className='w-10 h-10 rounded-full mb-2' />
-            <div className='flex flex-col gap-4 divide-y divide-zinc-800 w-full'>
-              <textarea
-                className='bg-transparent text-white placeholder:text-gray-500 focus:outline-none resize-none h-30'
-                placeholder='무슨 일이 일어나고 있나요?'
-              />
-              <button className='bg-primary text-white px-4 py-2 rounded-2xl self-end mt-2'>게시</button>
-            </div>
-          </div>
-        </div>
+    <div className='mx-auto grid min-h-full w-full max-w-[1060px] grid-cols-1 gap-8 px-0 lg:px-8 xl:grid-cols-[minmax(0,620px)_256px] xl:gap-16'>
+      <section className='min-w-0 sm:py-0'>
+        <header className='sticky top-0 z-10 flex h-14 items-center border-b border-border-subtle bg-bg/95 px-4 backdrop-blur sm:hidden'>
+          <h1 className='text-[18px] font-bold text-text-primary'>홈</h1>
+        </header>
+        <ThreadComposer />
+        <section aria-label='Z 피드'>
+          {posts.map((post, index) => (
+            <ThreadPost
+              key={`${post.author}-${post.time}`}
+              {...post}
+              isLast={index === posts.length - 1}
+            />
+          ))}
+        </section>
       </section>
-
-      <section className='mx-20 not-sm:mx-0 bg-secondary rounded-2xl border border-zinc-800 divide-y divide-zinc-700'>
-        <Article profileImage='https://avatars.githubusercontent.com/u/583231?v=4' nickname='John Doe' date='2024-06-01' content='Article content 1' />
-        <Article profileImage='https://avatars.githubusercontent.com/u/583231?v=4' nickname='John Doe' date='2024-06-01' content='Article content 2' />
-        <Article profileImage='https://avatars.githubusercontent.com/u/583231?v=4' nickname='John Doe' date='2024-06-01' content='Article content 3' />
-        <Article profileImage='https://avatars.githubusercontent.com/u/583231?v=4' nickname='John Doe' date='2024-06-01' content='Article content 4' />
-        <Article profileImage='https://avatars.githubusercontent.com/u/583231?v=4' nickname='John Doe' date='2024-06-01' content='Article content 5' />
-        <Article profileImage='https://avatars.githubusercontent.com/u/583231?v=4' nickname='John Doe' date='2024-06-01' content='Article content 1' />
-        <Article profileImage='https://avatars.githubusercontent.com/u/583231?v=4' nickname='John Doe' date='2024-06-01' content='Article content 2' />
-        <Article profileImage='https://avatars.githubusercontent.com/u/583231?v=4' nickname='John Doe' date='2024-06-01' content='Article content 3' />
-        <Article profileImage='https://avatars.githubusercontent.com/u/583231?v=4' nickname='John Doe' date='2024-06-01' content='Article content 4' />
-        <Article profileImage='https://avatars.githubusercontent.com/u/583231?v=4' nickname='John Doe' date='2024-06-01' content='Article content 5' />
-        <Article profileImage='https://avatars.githubusercontent.com/u/583231?v=4' nickname='John Doe' date='2024-06-01' content='Article content 1' />
-        <Article profileImage='https://avatars.githubusercontent.com/u/583231?v=4' nickname='John Doe' date='2024-06-01' content='Article content 2' />
-        <Article profileImage='https://avatars.githubusercontent.com/u/583231?v=4' nickname='John Doe' date='2024-06-01' content='Article content 3' />
-        <Article profileImage='https://avatars.githubusercontent.com/u/583231?v=4' nickname='John Doe' date='2024-06-01' content='Article content 4' />
-        <Article profileImage='https://avatars.githubusercontent.com/u/583231?v=4' nickname='John Doe' date='2024-06-01' content='Article content 5' />
-        <Article profileImage='https://avatars.githubusercontent.com/u/583231?v=4' nickname='John Doe' date='2024-06-01' content='Article content 1' />
-        <Article profileImage='https://avatars.githubusercontent.com/u/583231?v=4' nickname='John Doe' date='2024-06-01' content='Article content 2' />
-        <Article profileImage='https://avatars.githubusercontent.com/u/583231?v=4' nickname='John Doe' date='2024-06-01' content='Article content 3' />
-        <Article profileImage='https://avatars.githubusercontent.com/u/583231?v=4' nickname='John Doe' date='2024-06-01' content='Article content 4' />
-        <Article profileImage='https://avatars.githubusercontent.com/u/583231?v=4' nickname='John Doe' date='2024-06-01' content='Article content 5' />
-      </section>
-    </main>
+      <RightRail />
+    </div>
   )
 }
