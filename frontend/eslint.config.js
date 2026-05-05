@@ -1,33 +1,21 @@
-import js from '@eslint/js'
 import globals from 'globals'
 import reactHooks from 'eslint-plugin-react-hooks'
-import reactRefresh from 'eslint-plugin-react-refresh'
 import tseslint from 'typescript-eslint'
-import neostandard from 'neostandard'
 import { defineConfig, globalIgnores } from 'eslint/config'
 
-const ignores = ['dist', '.**/*']
+const ignores = ['.next', 'dist', 'node_modules', 'next-env.d.ts']
 
 export default defineConfig([
   globalIgnores(ignores),
-  neostandard({
-    ts: true,
-    ignores,
-    filesTs: ['**/*.{ts,tsx}']
-  }),
+  ...tseslint.configs.recommendedTypeChecked,
+  reactHooks.configs.flat.recommended,
   {
     files: ['**/*.{ts,tsx}'],
-    extends: [
-      js.configs.recommended,
-      tseslint.configs.recommendedTypeChecked,
-      reactHooks.configs.flat.recommended,
-      reactRefresh.configs.vite,
-    ],
     languageOptions: {
       ecmaVersion: 2020,
       globals: { ...globals.browser, ...globals.node },
       parserOptions: {
-        project: ['./tsconfig.app.json', './tsconfig.node.json'],
+        project: ['./tsconfig.json'],
         tsconfigRootDir: import.meta.dirname,
       }
     },
