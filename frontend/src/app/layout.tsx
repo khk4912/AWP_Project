@@ -1,8 +1,16 @@
 import type { Metadata } from 'next'
+import { Noto_Sans_KR } from 'next/font/google'
 import './globals.css'
 
+const notoSansKr = Noto_Sans_KR({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  display: 'swap',
+})
+
 export const metadata: Metadata = {
-  title: 'Project G',
+  title: 'Z',
+  description: 'Z social network',
 }
 
 export default function RootLayout ({
@@ -12,7 +20,7 @@ export default function RootLayout ({
 }) {
   return (
     <html lang='ko'>
-      <body>{children}</body>
+      <body className={notoSansKr.className}>{children}</body>
     </html>
   )
 }
