@@ -13,7 +13,6 @@ type ThreadPostProps = {
   avatarUrl: string
   content: string
   imageUrl?: string
-  isLast?: boolean
   likeCount: string
   replyCount: string
   time: string
@@ -50,7 +49,6 @@ export function ThreadPost ({
   avatarUrl,
   content,
   imageUrl,
-  isLast = false,
   likeCount,
   replyCount,
   time,
@@ -65,11 +63,10 @@ export function ThreadPost ({
             alt={`${author} 프로필`}
             className='size-9 rounded-full object-cover'
           />
-          {!isLast ? <div className='mt-3 w-px flex-1 bg-border-subtle' /> : null}
         </div>
 
         <div className='min-w-0 flex-1'>
-          <header className='flex items-start justify-between gap-4'>
+          <header className='flex items-center justify-between gap-4'>
             <div className='min-w-0'>
               <div className='flex items-center gap-1.5'>
                 <h2 className='truncate text-[15px] font-semibold leading-5 text-text-primary'>{author}</h2>
@@ -88,7 +85,7 @@ export function ThreadPost ({
             </div>
           </header>
 
-          <p className='mt-1 whitespace-pre-line text-[15px] leading-6 text-text-primary'>
+          <p className='mt-1 whitespace-pre-line text-[15px] leading-6 text-gray-100'>
             {content}
           </p>
 
@@ -96,7 +93,7 @@ export function ThreadPost ({
             <img
               src={imageUrl}
               alt='게시글 이미지'
-              className='mt-3 aspect-[573/321] w-full rounded-lg border border-border-subtle object-cover'
+              className='mt-3 aspect-573/321 w-full rounded-lg border border-border-subtle object-cover'
             />
           ) : null}
 

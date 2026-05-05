@@ -43,18 +43,17 @@ const posts = [
 
 export function ArticleView () {
   return (
-    <div className='mx-auto min-h-full w-full max-w-[620px] px-0 lg:px-8'>
+    <div className='mx-auto min-h-full w-full max-w-155 px-0 lg:px-8'>
       <section className='min-w-0 sm:py-0'>
         <header className='sticky top-0 z-10 flex h-14 items-center border-b border-border-subtle bg-bg/95 px-4 backdrop-blur lg:hidden'>
           <h1 className='text-[18px] font-bold text-text-primary'>홈</h1>
         </header>
         <ThreadComposer />
         <section aria-label='Z 피드'>
-          {posts.map((post, index) => (
+          {posts.map((post) => (
             <ThreadPost
               key={`${post.author}-${post.time}`}
               {...post}
-              isLast={index === posts.length - 1}
             />
           ))}
         </section>
