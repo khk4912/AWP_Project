@@ -1,4 +1,12 @@
 import type { ReactNode } from 'react'
+import {
+  BadgeCheck,
+  Heart,
+  MessageCircle,
+  MoreHorizontal,
+  Repeat2,
+  Send,
+} from 'lucide-react'
 
 type ThreadPostProps = {
   author: string
@@ -31,19 +39,9 @@ function ActionButton ({ label, children }: ActionButtonProps) {
 
 function VerifiedBadge () {
   return (
-    <span className='inline-flex size-3 items-center justify-center rounded-full bg-primary text-[8px] font-bold text-white'>
-      ✓
+    <span className='inline-flex size-3.5 items-center justify-center text-primary'>
+      <BadgeCheck className='size-3.5 fill-primary text-bg' strokeWidth={2.2} aria-hidden='true' />
     </span>
-  )
-}
-
-function MoreIcon () {
-  return (
-    <svg viewBox='0 0 24 24' fill='currentColor' className='size-5' aria-hidden='true'>
-      <circle cx='6' cy='12' r='1.4' />
-      <circle cx='12' cy='12' r='1.4' />
-      <circle cx='18' cy='12' r='1.4' />
-    </svg>
   )
 }
 
@@ -85,7 +83,7 @@ export function ThreadPost ({
                 aria-label='더보기'
                 className='inline-flex size-7 items-center justify-center rounded-full transition-colors hover:bg-white/10 hover:text-text-primary'
               >
-                <MoreIcon />
+                <MoreHorizontal className='size-5' strokeWidth={2} aria-hidden='true' />
               </button>
             </div>
           </header>
@@ -105,24 +103,16 @@ export function ThreadPost ({
           <footer className='mt-3'>
             <div className='flex items-center gap-1'>
               <ActionButton label='좋아요'>
-                <svg viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='1.8' className='size-5' aria-hidden='true'>
-                  <path strokeLinecap='round' strokeLinejoin='round' d='M20.8 8.9c0 5.3-8.8 10.1-8.8 10.1S3.2 14.2 3.2 8.9A4.5 4.5 0 0 1 7.8 4.4c1.9 0 3.2 1 4.2 2.2 1-1.2 2.3-2.2 4.2-2.2a4.5 4.5 0 0 1 4.6 4.5Z' />
-                </svg>
+                <Heart className='size-5' strokeWidth={1.9} aria-hidden='true' />
               </ActionButton>
               <ActionButton label='댓글'>
-                <svg viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='1.8' className='size-5' aria-hidden='true'>
-                  <path strokeLinecap='round' strokeLinejoin='round' d='M7.5 18.5h7.7c3 0 5.3-2.1 5.3-4.8s-2.3-4.8-5.3-4.8H8.8c-3 0-5.3 2.1-5.3 4.8 0 1.7.9 3.1 2.3 4v3.1l1.7-2.3Z' />
-                </svg>
+                <MessageCircle className='size-5' strokeWidth={1.9} aria-hidden='true' />
               </ActionButton>
               <ActionButton label='리포스트'>
-                <svg viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='1.8' className='size-5' aria-hidden='true'>
-                  <path strokeLinecap='round' strokeLinejoin='round' d='M17 7H8.5A3.5 3.5 0 0 0 5 10.5V11m0 0 2.4-2.4M5 11l2.4 2.4M7 17h8.5a3.5 3.5 0 0 0 3.5-3.5V13m0 0-2.4 2.4M19 13l-2.4-2.4' />
-                </svg>
+                <Repeat2 className='size-5' strokeWidth={1.9} aria-hidden='true' />
               </ActionButton>
               <ActionButton label='공유'>
-                <svg viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='1.8' className='size-5' aria-hidden='true'>
-                  <path strokeLinecap='round' strokeLinejoin='round' d='M8.5 12.7 15.8 8m-7.3 3.3 7.3 4.7M17.5 8.8a2.3 2.3 0 1 0 0-4.6 2.3 2.3 0 0 0 0 4.6ZM17.5 19.8a2.3 2.3 0 1 0 0-4.6 2.3 2.3 0 0 0 0 4.6ZM6.5 15a2.3 2.3 0 1 0 0-4.6 2.3 2.3 0 0 0 0 4.6Z' />
-                </svg>
+                <Send className='size-5' strokeWidth={1.9} aria-hidden='true' />
               </ActionButton>
             </div>
             <p className='mt-1 text-[14px] text-text-muted'>

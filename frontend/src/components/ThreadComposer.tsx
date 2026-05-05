@@ -1,3 +1,5 @@
+import { Paperclip } from 'lucide-react'
+
 const currentUserAvatar = 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=120&q=80'
 
 export function ThreadComposer () {
@@ -32,9 +34,7 @@ export function ThreadComposer () {
               aria-label='첨부'
               className='inline-flex size-8 items-center justify-center rounded-full text-text-muted transition-colors hover:bg-white/10 hover:text-text-primary'
             >
-              <svg viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='1.8' className='size-5' aria-hidden='true'>
-                <path strokeLinecap='round' strokeLinejoin='round' d='m8.5 12.5 5.8-5.8a3.2 3.2 0 1 1 4.5 4.5l-7.2 7.2a5 5 0 0 1-7.1-7.1l6.9-6.9' />
-              </svg>
+              <Paperclip className='size-5' strokeWidth={1.9} aria-hidden='true' />
             </button>
             <p className='text-[12px] text-text-muted'>모든 사용자가 답글을 남길 수 있어요</p>
           </div>
