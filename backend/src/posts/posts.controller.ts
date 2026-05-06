@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post as HttpPost, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post as HttpPost, Query, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ApiBearerAuth, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { User } from '../common/decorators/user.decorator';
@@ -27,8 +27,8 @@ export class PostsController {
 
   @ApiOperation({ summary: '게시글 전체 조회' })
   @Get()
-  async findAll() {
-    return this.postsService.findAll();
+  async findAll(@Query('skip') skip: string = '0', @Query('limit') limit: string = '10') {
+    return this.postsService.findAll(parseInt(skip), parseInt(limit));
   }
 
   @ApiOperation({ summary: '단일 게시글 조회' })

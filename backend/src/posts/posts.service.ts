@@ -21,8 +21,24 @@ export class PostsService {
     };
   }
 
-  async findAll() {
-    return this.postModel.find().populate('author', 'username email profileImage').sort({ createdAt: -1 }).exec();
+  async findAll(skip: number = 0, limit: number = 10) {
+    const total = await this.postModel.countDocuments().exec();
+    const posts = await this.postModel
+      .find()
+      .populate('author', 'username email profileImage')
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .exec();
+    return {
+      posts,
+      pagination: {
+        skip,
+        limit,
+        total,
+        hasMore: skip + limit < total,
+      },
+    };
   }
 
   async findOne(id: string) {
