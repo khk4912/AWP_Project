@@ -1,0 +1,29 @@
+@import "tailwindcss";
+
+html {
+  background: #101010;
+  color-scheme: dark;
+}
+
+body {
+  min-height: 100vh;
+  background: #101010;
+  color: #f3f5f7;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+@theme {
+  --color-primary: #3e95ef;
+  --color-bg: #101010;
+  --color-bg-soft: #181818;
+  --color-bg-hover: #202020;
+  --color-secondary: #151515;
+  --color-border-subtle: rgba(255, 255, 255, 0.1);
+  --color-text-primary: #f3f5f7;
+  --color-text-muted: #616161;
+}

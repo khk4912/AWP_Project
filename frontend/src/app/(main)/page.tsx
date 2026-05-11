@@ -1,4 +1,4 @@
-import { ArticleView } from './_components/ArticleView'
+import { ArticleView } from '@/components/ArticleView'
 
 export default function Page () {
   return <ArticleView />
