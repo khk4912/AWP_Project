@@ -1,12 +1,15 @@
 import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { UserDocument } from '../users/schemas/user.schema';
+import { UserDocument, User } from '../users/schemas/user.schema';
 import { Post, PostDocument } from './schemas/post.schema';
 
 @Injectable()
 export class PostsService {
-  constructor(@InjectModel(Post.name) private readonly postModel: Model<PostDocument>) {}
+  constructor(
+    @InjectModel(Post.name) private readonly postModel: Model<PostDocument>,
+    @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
+  ) {}
 
   async create(postData: { author: string; content: string; imageUrl?: string }) {
     const newPost = new this.postModel({
@@ -96,10 +99,27 @@ export class PostsService {
     return { message: 'Post unliked successfully.' };
   }
 
-  async uploadImage(file: Express.Multer.File) {
+  async getFeed(userId: string, skip: number = 0, limit: number = 10) {
+    const user = await this.userModel.findById(userId).exec();
+    if (!user) throw new NotFoundException('User not found.');
+
+    const followingIds = (user.following || []).map((id) => id.toString());
+    const total = await this.postModel.countDocuments({ author: { $in: followingIds } }).exec();
+    const posts = await this.postModel
+      .find({ author: { $in: followingIds } })
+      .populate('author', 'username email profileImage')
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .exec();
     return {
-      message: 'Image uploaded successfully.',
-      imageUrl: `/uploads/${file.originalname}`,
+      posts,
+      pagination: {
+        skip,
+        limit,
+        total,
+        hasMore: skip + limit < total,
+      },
     };
   }
 }
