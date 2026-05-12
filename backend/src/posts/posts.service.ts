@@ -3,12 +3,14 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { UserDocument, User } from '../users/schemas/user.schema';
 import { Post, PostDocument } from './schemas/post.schema';
+import { Comment, CommentDocument } from '../comments/schemas/comment.schema';
 
 @Injectable()
 export class PostsService {
   constructor(
     @InjectModel(Post.name) private readonly postModel: Model<PostDocument>,
     @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
+    @InjectModel(Comment.name) private readonly commentModel: Model<CommentDocument>,
   ) {}
 
   async create(postData: { author: string; content: string; imageUrl?: string }) {
@@ -33,14 +35,17 @@ export class PostsService {
       .skip(skip)
       .limit(limit)
       .exec();
+
+    const postsWithCount = await Promise.all(
+      posts.map(async (post) => ({
+        ...post.toObject(),
+        commentCount: await this.commentModel.countDocuments({ post: post._id }).exec(),
+      }))
+    );
+
     return {
-      posts,
-      pagination: {
-        skip,
-        limit,
-        total,
-        hasMore: skip + limit < total,
-      },
+      posts: postsWithCount,
+      pagination: { skip, limit, total, hasMore: skip + limit < total },
     };
   }
 
@@ -112,14 +117,17 @@ export class PostsService {
       .skip(skip)
       .limit(limit)
       .exec();
+
+    const postsWithCount = await Promise.all(
+      posts.map(async (post) => ({
+        ...post.toObject(),
+        commentCount: await this.commentModel.countDocuments({ post: post._id }).exec(),
+      }))
+    );
+
     return {
-      posts,
-      pagination: {
-        skip,
-        limit,
-        total,
-        hasMore: skip + limit < total,
-      },
+      posts: postsWithCount,
+      pagination: { skip, limit, total, hasMore: skip + limit < total },
     };
   }
 }

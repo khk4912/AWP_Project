@@ -6,6 +6,7 @@ import {
   Bookmark,
   CircleUserRound,
   Home,
+  LogOut,
   MessageCircle,
   Search,
   type LucideIcon,
@@ -86,6 +87,26 @@ function Logo () {
   )
 }
 
+function LogoutButton () {
+  function handleLogout () {
+    localStorage.removeItem('token')
+    window.location.href = '/'
+  }
+
+  return (
+    <button
+      type='button'
+      onClick={handleLogout}
+      className='group flex w-full items-center gap-3 rounded-full py-1.5 text-[16px] text-zinc-400 transition-colors hover:text-white'
+    >
+      <span className='inline-flex size-11 items-center justify-center rounded-full transition-colors group-hover:bg-white/10'>
+        <LogOut className='size-[23px] shrink-0' strokeWidth={2} />
+      </span>
+      <h3 className='leading-none'>로그아웃</h3>
+    </button>
+  )
+}
+
 function DesktopSidebar () {
   return (
     <aside className='hidden h-screen w-[188px] shrink-0 flex-col border-r border-border-subtle bg-bg px-6 py-[30px] text-white lg:flex'>
@@ -96,11 +117,9 @@ function DesktopSidebar () {
             <LayoutItem key={item.href} {...item} />
           ))}
         </div>
-        {/*
-        <div className='mt-auto flex w-full justify-start'>
-          <button type='button'>더보기</button>
+        <div className='mt-auto'>
+          <LogoutButton />
         </div>
-        */}
       </nav>
     </aside>
   )
