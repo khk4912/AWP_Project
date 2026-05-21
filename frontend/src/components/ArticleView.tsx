@@ -1,47 +1,47 @@
 import { ThreadComposer } from './ThreadComposer'
 import { ThreadPost } from './ThreadPost'
 
-const posts = [
-  {
-    author: 'donmilli',
-    avatarUrl: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=120&q=80',
-    content: 'Just crossed 4,000 followers here. Thanks for making this little corner of the internet feel alive.\nI am dropping a new realtime AR puppet test later this week.',
-    likeCount: '32K',
-    replyCount: '2,342',
-    time: '8h',
-    verified: true,
-  },
-  {
-    author: 'arcastic_us',
-    avatarUrl: 'https://images.unsplash.com/photo-1527980965255-d3b416303d12?auto=format&fit=crop&w=120&q=80',
-    content: 'First proper meme on Z. The dark feed actually makes everything feel calmer than I expected.',
-    imageUrl: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1200&q=80',
-    likeCount: '12K',
-    replyCount: '640',
-    time: '12h',
-    verified: true,
-  },
-  {
-    author: 'nasdaily',
-    avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&q=80',
-    content: 'This place is called Sealand. It sits a few kilometers off the coast of the UK.\nTo most people it looked abandoned. To one person, it looked like a country waiting to happen.',
-    likeCount: '3K',
-    replyCount: '72',
-    time: '1d',
-    verified: true,
-  },
-  {
-    author: 'mkbhd',
-    avatarUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=120&q=80',
-    content: 'The best short-form social apps always come down to density. If the first screen feels right, people stay.',
-    likeCount: '4.7K',
-    replyCount: '345',
-    time: '1d',
-    verified: true,
-  },
-]
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000'
 
-export function ArticleView () {
+type PostAuthor = {
+  _id: string
+  username: string
+  profileImage: string
+}
+
+type Post = {
+  _id: string
+  author: PostAuthor
+  content: string
+  imageUrl: string
+  likedBy: string[]
+  createdAt: string
+}
+
+function relativeTime(dateStr: string): string {
+  const diff = Date.now() - new Date(dateStr).getTime()
+  const minutes = Math.floor(diff / 60000)
+  if (minutes < 60) return `${minutes}분`
+  const hours = Math.floor(minutes / 60)
+  if (hours < 24) return `${hours}시간`
+  const days = Math.floor(hours / 24)
+  return `${days}일`
+}
+
+async function fetchPosts(): Promise<Post[]> {
+  try {
+    const res = await fetch(`${API_URL}/posts`, { cache: 'no-store' })
+    if (!res.ok) return []
+    const data = await res.json()
+    return data.posts
+  } catch {
+    return []
+  }
+}
+
+export async function ArticleView() {
+  const posts = await fetchPosts()
+
   return (
     <div className='mx-auto min-h-full w-full max-w-155 px-0 lg:px-8'>
       <section className='min-w-0 sm:py-0'>
@@ -50,12 +50,22 @@ export function ArticleView () {
         </header>
         <ThreadComposer />
         <section aria-label='Z 피드'>
-          {posts.map((post) => (
-            <ThreadPost
-              key={`${post.author}-${post.time}`}
-              {...post}
-            />
-          ))}
+          {posts.length === 0 ? (
+            <p className='px-4 py-10 text-center text-text-muted'>게시글이 없습니다.</p>
+          ) : (
+            posts.map((post) => (
+              <ThreadPost
+                key={post._id}
+                author={post.author.username}
+                avatarUrl={post.author.profileImage}
+                content={post.content}
+                imageUrl={post.imageUrl || undefined}
+                likeCount={post.likedBy.length.toString()}
+                replyCount='0'
+                time={relativeTime(post.createdAt)}
+              />
+            ))
+          )}
         </section>
       </section>
       {/* <RightRail /> */}

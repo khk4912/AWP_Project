@@ -1,6 +1,5 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post as HttpPost, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
-import { ApiBearerAuth, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { Body, Controller, Delete, Get, Param, Patch, Post as HttpPost, Query, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { User } from '../common/decorators/user.decorator';
 import { JwtPayload } from '../common/interfaces/jwt-payload.interface';
 import { JwtGuard } from '../auth/guards/jwt.guard';
@@ -27,8 +26,16 @@ export class PostsController {
 
   @ApiOperation({ summary: '게시글 전체 조회' })
   @Get()
-  async findAll() {
-    return this.postsService.findAll();
+  async findAll(@Query('skip') skip: string = '0', @Query('limit') limit: string = '10') {
+    return this.postsService.findAll(parseInt(skip), parseInt(limit));
+  }
+
+  @ApiOperation({ summary: '피드 (팔로우한 사람의 글)' })
+  @ApiBearerAuth()
+  @UseGuards(JwtGuard)
+  @Get('feed')
+  async getFeed(@User() user: JwtPayload, @Query('skip') skip: string = '0', @Query('limit') limit: string = '10') {
+    return this.postsService.getFeed(user.userId, parseInt(skip), parseInt(limit));
   }
 
   @ApiOperation({ summary: '단일 게시글 조회' })
@@ -67,15 +74,5 @@ export class PostsController {
   @HttpPost(':id/unlike')
   async unlike(@Param('id') id: string, @User() user: JwtPayload) {
     return this.postsService.unlike(id, user.userId);
-  }
-
-  @ApiOperation({ summary: '이미지 업로드' })
-  @ApiConsumes('multipart/form-data')
-  @ApiBearerAuth()
-  @UseGuards(JwtGuard)
-  @UseInterceptors(FileInterceptor('file'))
-  @HttpPost('upload/image')
-  uploadImage(@UploadedFile() file: Express.Multer.File) {
-    return this.postsService.uploadImage(file);
   }
 }
