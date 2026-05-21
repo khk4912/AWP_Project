@@ -1,13 +1,39 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Paperclip } from 'lucide-react'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000'
+const MAX_LENGTH = 280
+
+type UserInfo = {
+  username: string
+  profileImage: string
+}
+
+function getUserIdFromToken(): string {
+  try {
+    const token = localStorage.getItem('token')
+    if (!token) return ''
+    return JSON.parse(atob(token.split('.')[1])).userId ?? ''
+  } catch {
+    return ''
+  }
+}
 
 export function ThreadComposer({ onPost }: { onPost?: () => void }) {
   const [content, setContent] = useState('')
   const [loading, setLoading] = useState(false)
+  const [user, setUser] = useState<UserInfo | null>(null)
+
+  useEffect(() => {
+    const userId = getUserIdFromToken()
+    if (!userId) return
+    fetch(`${API_URL}/users/${userId}`)
+      .then((r) => r.json())
+      .then((data) => setUser({ username: data.username, profileImage: data.profileImage }))
+      .catch(() => {})
+  }, [])
 
   async function handleSubmit() {
     const token = localStorage.getItem('token')
@@ -31,20 +57,34 @@ export function ThreadComposer({ onPost }: { onPost?: () => void }) {
     }
   }
 
+  const remaining = MAX_LENGTH - content.length
+  const isOverLimit = remaining < 0
+  const isNearLimit = remaining <= 20 && !isOverLimit
+
   return (
     <section className='border-b border-border-subtle px-4 py-5 sm:px-0 sm:py-[30px]'>
       <div className='flex gap-3'>
-        <div className='size-9 shrink-0 rounded-full bg-neutral-600 flex items-center justify-center text-sm font-semibold text-white'>
-          Z
-        </div>
+        {user?.profileImage ? (
+          <img
+            src={user.profileImage}
+            alt='내 프로필'
+            className='size-9 shrink-0 rounded-full object-cover'
+          />
+        ) : (
+          <div className='size-9 shrink-0 rounded-full bg-neutral-600 flex items-center justify-center text-sm font-semibold text-white'>
+            {user?.username?.[0]?.toUpperCase() ?? 'Z'}
+          </div>
+        )}
 
         <div className='min-w-0 flex-1'>
           <div className='flex items-center justify-between gap-4'>
-            <p className='text-[15px] font-semibold text-text-primary'>내 게시글</p>
+            <p className='text-[15px] font-semibold text-text-primary'>
+              {user?.username ?? ''}
+            </p>
             <button
               type='button'
               onClick={handleSubmit}
-              disabled={loading || !content.trim()}
+              disabled={loading || !content.trim() || isOverLimit}
               className='text-[13px] font-semibold text-primary transition-colors hover:text-sky-300 disabled:opacity-40'
             >
               {loading ? '게시 중...' : '게시'}
@@ -66,7 +106,12 @@ export function ThreadComposer({ onPost }: { onPost?: () => void }) {
             >
               <Paperclip className='size-5' strokeWidth={1.9} aria-hidden='true' />
             </button>
-            <p className='text-[12px] text-text-muted'>모든 사용자가 답글을 남길 수 있어요</p>
+
+            <span className={`text-[12px] tabular-nums ${
+              isOverLimit ? 'text-red-400' : isNearLimit ? 'text-yellow-400' : 'text-text-muted'
+            }`}>
+              {remaining}
+            </span>
           </div>
         </div>
       </div>

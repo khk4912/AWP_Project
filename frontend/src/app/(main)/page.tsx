@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { RefreshCw } from 'lucide-react'
 import { ThreadComposer } from '@/components/ThreadComposer'
 import { ThreadPost } from '@/components/ThreadPost'
 import zIconSrc from '@assets/z-icon.png'
@@ -35,14 +36,27 @@ function relativeTime(dateStr: string): string {
   return `${days}일`
 }
 
-// JWT payload 중간 부분(Base64)만 decode해서 userId 꺼냄
 function getUserIdFromToken(token: string): string {
   try {
-    const payload = token.split('.')[1]
-    return JSON.parse(atob(payload)).userId ?? ''
+    return JSON.parse(atob(token.split('.')[1])).userId ?? ''
   } catch {
     return ''
   }
+}
+
+function SkeletonPost() {
+  return (
+    <div className='border-b border-border-subtle px-4 py-5 sm:px-0'>
+      <div className='flex gap-3'>
+        <div className='size-9 shrink-0 rounded-full bg-white/10 animate-pulse' />
+        <div className='flex-1 space-y-2'>
+          <div className='h-3 w-24 rounded-full bg-white/10 animate-pulse' />
+          <div className='h-3 w-full rounded-full bg-white/10 animate-pulse' />
+          <div className='h-3 w-3/4 rounded-full bg-white/10 animate-pulse' />
+        </div>
+      </div>
+    </div>
+  )
 }
 
 function LandingView() {
@@ -69,17 +83,98 @@ function LandingView() {
   )
 }
 
-function FeedView({ posts, userId, onPost }: { posts: Post[], userId: string, onPost: () => void }) {
+type Tab = 'all' | 'feed'
+
+function FeedView({ userId, token }: { userId: string; token: string }) {
+  const [tab, setTab] = useState<Tab>('all')
+  const [posts, setPosts] = useState<Post[]>([])
+  const [loading, setLoading] = useState(false)
+  const [refreshing, setRefreshing] = useState(false)
+  const [visible, setVisible] = useState(true)
+
+  async function fetchPosts(t: Tab, silent = false) {
+    if (!silent) setLoading(true)
+    else setRefreshing(true)
+
+    try {
+      const url = t === 'feed' ? `${API_URL}/posts/feed` : `${API_URL}/posts`
+      const headers: HeadersInit = t === 'feed' ? { Authorization: `Bearer ${token}` } : {}
+      const res = await fetch(url, { headers, cache: 'no-store' })
+      const data = await res.json()
+      setPosts(data.posts ?? [])
+    } catch {
+    } finally {
+      setLoading(false)
+      setRefreshing(false)
+    }
+  }
+
+  useEffect(() => {
+    setVisible(false)
+    const timer = setTimeout(() => {
+      fetchPosts(tab).then(() => setVisible(true))
+    }, 80)
+    return () => clearTimeout(timer)
+  }, [tab])
+
+  function handleTabChange(t: Tab) {
+    if (t !== tab) setTab(t)
+  }
+
   return (
     <div className='mx-auto min-h-full w-full max-w-155 px-0 lg:px-8'>
-      <section className='min-w-0 sm:py-0'>
-        <header className='sticky top-0 z-10 flex h-14 items-center border-b border-border-subtle bg-bg/95 px-4 backdrop-blur lg:hidden'>
-          <h1 className='text-[18px] font-bold text-text-primary'>홈</h1>
+      <section className='min-w-0'>
+
+        {/* 헤더 */}
+        <header className='sticky top-0 z-10 border-b border-border-subtle bg-bg/95 backdrop-blur'>
+          <div className='flex h-14 items-center justify-between px-4'>
+            <h1 className='text-[18px] font-bold text-text-primary'>홈</h1>
+            <button
+              type='button'
+              aria-label='새로고침'
+              onClick={() => fetchPosts(tab, true)}
+              className='inline-flex size-8 items-center justify-center rounded-full text-text-muted transition-colors hover:bg-white/10 hover:text-text-primary'
+            >
+              <RefreshCw className={`size-4 ${refreshing ? 'animate-spin' : ''}`} strokeWidth={2} />
+            </button>
+          </div>
+
+          {/* 탭 */}
+          <div className='flex'>
+            {(['all', 'feed'] as Tab[]).map((t) => (
+              <button
+                key={t}
+                type='button'
+                onClick={() => handleTabChange(t)}
+                className={`relative flex-1 py-3 text-[15px] font-semibold transition-colors ${
+                  tab === t ? 'text-text-primary' : 'text-text-muted hover:text-text-primary hover:bg-white/5'
+                }`}
+              >
+                {t === 'all' ? '전체' : '팔로우'}
+                {tab === t && (
+                  <span className='absolute bottom-0 left-1/2 h-1 w-12 -translate-x-1/2 rounded-full bg-primary' />
+                )}
+              </button>
+            ))}
+          </div>
         </header>
-        <ThreadComposer onPost={onPost} />
-        <section aria-label='Z 피드'>
-          {posts.length === 0 ? (
-            <p className='px-4 py-10 text-center text-text-muted'>게시글이 없습니다.</p>
+
+        <ThreadComposer onPost={() => fetchPosts(tab, true)} />
+
+        <section
+          aria-label='Z 피드'
+          className={`transition-opacity duration-200 ${visible ? 'opacity-100' : 'opacity-0'}`}
+        >
+          {loading ? (
+            <>
+              <SkeletonPost />
+              <SkeletonPost />
+              <SkeletonPost />
+            </>
+          ) : posts.length === 0 ? (
+            <p className='px-4 py-10 text-center text-text-muted'>
+              {tab === 'feed' ? '팔로우한 사람의 게시글이 없습니다.' : '게시글이 없습니다.'}
+            </p>
           ) : (
             posts.map((post) => (
               <ThreadPost
@@ -106,35 +201,17 @@ function FeedView({ posts, userId, onPost }: { posts: Post[], userId: string, on
 export default function HomePage() {
   const [token, setToken] = useState<string | null>(null)
   const [userId, setUserId] = useState('')
-  const [posts, setPosts] = useState<Post[]>([])
   const [ready, setReady] = useState(false)
 
   useEffect(() => {
     const t = localStorage.getItem('token')
     setToken(t)
-
-    if (t) {
-      setUserId(getUserIdFromToken(t))
-      fetch(`${API_URL}/posts`, { cache: 'no-store' })
-        .then((res) => res.json())
-        .then((data) => setPosts(data.posts ?? []))
-        .catch(() => {})
-        .finally(() => setReady(true))
-    } else {
-      setReady(true)
-    }
+    if (t) setUserId(getUserIdFromToken(t))
+    setReady(true)
   }, [])
 
-  function refreshPosts() {
-    fetch(`${API_URL}/posts`, { cache: 'no-store' })
-      .then((res) => res.json())
-      .then((data) => setPosts(data.posts ?? []))
-      .catch(() => {})
-  }
-
   if (!ready) return null
-
   if (!token) return <LandingView />
 
-  return <FeedView posts={posts} userId={userId} onPost={refreshPosts} />
+  return <FeedView userId={userId} token={token} />
 }
