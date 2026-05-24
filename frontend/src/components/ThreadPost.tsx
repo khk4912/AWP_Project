@@ -8,12 +8,12 @@ import {
   Heart,
   MessageCircle,
   MoreHorizontal,
-  Repeat2,
-  Send,
-  Trash2,
+  Trash2
 } from 'lucide-react'
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000'
+import { createComment, deleteComment, getComments, likePost, unlikePost } from '@/lib/api'
+import { getAuthToken, getUserIdFromToken } from '@/lib/auth'
+import { getInitial } from '@/lib/format'
+import type { Comment } from '@/lib/types'
 
 type ThreadPostProps = {
   postId: string
@@ -27,13 +27,6 @@ type ThreadPostProps = {
   replyCount: string
   time: string
   verified?: boolean
-}
-
-type Comment = {
-  _id: string
-  author: { _id: string; username: string; profileImage: string }
-  content: string
-  createdAt: string
 }
 
 type ActionButtonProps = {
@@ -63,16 +56,6 @@ function VerifiedBadge () {
   )
 }
 
-function getUserIdFromToken (): string {
-  try {
-    const token = localStorage.getItem('token')
-    if (!token) return ''
-    return JSON.parse(atob(token.split('.')[1])).userId ?? ''
-  } catch {
-    return ''
-  }
-}
-
 export function ThreadPost ({
   postId,
   authorId,
@@ -84,7 +67,7 @@ export function ThreadPost ({
   likedByMe,
   replyCount,
   time,
-  verified = false,
+  verified = false
 }: ThreadPostProps) {
   const [liked, setLiked] = useState(likedByMe)
   const [count, setCount] = useState(likeCount)
@@ -94,72 +77,82 @@ export function ThreadPost ({
   const [commentText, setCommentText] = useState('')
   const [commentsFetched, setCommentsFetched] = useState(false)
   const [submitting, setSubmitting] = useState(false)
+  const [commentError, setCommentError] = useState('')
 
   async function handleLike () {
-    const token = localStorage.getItem('token')
-    if (!token) return
+    const token = getAuthToken()
+    if (token == null) return
 
-    const endpoint = liked ? 'unlike' : 'like'
-    setLiked(!liked)
-    setCount(liked ? count - 1 : count + 1)
+    const nextLiked = !liked
+    const nextCount = liked ? Math.max(0, count - 1) : count + 1
+    setLiked(nextLiked)
+    setCount(nextCount)
 
-    await fetch(`${API_URL}/posts/${postId}/${endpoint}`, {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${token}` },
-    }).catch(() => {
+    try {
+      if (liked) await unlikePost(token, postId)
+      else await likePost(token, postId)
+    } catch {
       setLiked(liked)
       setCount(count)
-    })
+    }
   }
 
   async function fetchComments () {
-    const res = await fetch(`${API_URL}/comments/post/${postId}`)
-    const data = await res.json()
-    const list = Array.isArray(data) ? data : []
-    setComments(list)
-    setCommentCount(list.length.toString())
-    setCommentsFetched(true)
+    setCommentError('')
+
+    try {
+      const list = await getComments(postId)
+      setComments(list)
+      setCommentCount(list.length.toString())
+      setCommentsFetched(true)
+    } catch {
+      setCommentError('댓글을 불러오지 못했습니다.')
+    }
   }
 
   function handleToggleComments () {
-    if (!showComments && !commentsFetched) fetchComments()
+    if (!showComments && !commentsFetched) fetchComments().catch(() => {})
     setShowComments(!showComments)
   }
 
   async function handleSubmitComment () {
-    const token = localStorage.getItem('token')
-    if (!token || !commentText.trim()) return
+    const token = getAuthToken()
+    if (token == null || commentText.trim().length === 0) return
 
     setSubmitting(true)
-    await fetch(`${API_URL}/comments`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ postId, content: commentText.trim() }),
-    })
-    setCommentText('')
-    await fetchComments()
-    setSubmitting(false)
+    setCommentError('')
+
+    try {
+      await createComment(token, postId, commentText.trim())
+      setCommentText('')
+      await fetchComments()
+    } catch {
+      setCommentError('댓글을 게시하지 못했습니다.')
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   async function handleDeleteComment (commentId: string) {
-    const token = localStorage.getItem('token')
-    if (!token) return
+    const token = getAuthToken()
+    if (token == null) return
 
-    await fetch(`${API_URL}/comments/${commentId}`, {
-      method: 'DELETE',
-      headers: { Authorization: `Bearer ${token}` },
-    })
-    setComments(comments.filter((c) => c._id !== commentId))
+    try {
+      await deleteComment(token, commentId)
+      setComments((currentComments) => currentComments.filter((comment) => comment._id !== commentId))
+      setCommentCount((currentCount) => Math.max(0, Number(currentCount) - 1).toString())
+    } catch {
+      setCommentError('댓글을 삭제하지 못했습니다.')
+    }
   }
+
+  const myId = getUserIdFromToken()
 
   return (
     <article className='relative border-b border-border-subtle px-4 py-5 sm:px-0'>
       <div className='flex gap-3'>
         <div className='flex shrink-0 flex-col items-center'>
-          {avatarUrl
+          {avatarUrl.length > 0
             ? (
               <img
                 src={avatarUrl}
@@ -169,7 +162,7 @@ export function ThreadPost ({
               )
             : (
               <div className='size-9 rounded-full bg-neutral-600 flex items-center justify-center text-sm font-semibold text-white'>
-                {author[0]?.toUpperCase()}
+                {getInitial(author)}
               </div>
               )}
         </div>
@@ -196,11 +189,11 @@ export function ThreadPost ({
             </div>
           </header>
 
-          <p className='mt-1 whitespace-pre-line text-[15px] leading-6 text-gray-100'>
+          <p className='mt-1 whitespace-pre-line break-words text-[15px] leading-6 text-gray-100'>
             {content}
           </p>
 
-          {imageUrl != null
+          {imageUrl != null && imageUrl.length > 0
             ? (
               <img
                 src={imageUrl}
@@ -212,7 +205,12 @@ export function ThreadPost ({
 
           <footer className='mt-3'>
             <div className='flex items-center gap-1'>
-              <ActionButton label='좋아요' onClick={handleLike}>
+              <ActionButton
+                label='좋아요'
+                onClick={() => {
+                  handleLike().catch(() => {})
+                }}
+              >
                 <Heart
                   className='size-5'
                   strokeWidth={1.9}
@@ -229,41 +227,37 @@ export function ThreadPost ({
                   fill={showComments ? 'currentColor' : 'none'}
                 />
               </ActionButton>
-              <ActionButton label='리포스트'>
-                <Repeat2 className='size-5' strokeWidth={1.9} aria-hidden='true' />
-              </ActionButton>
-              <ActionButton label='공유'>
-                <Send className='size-5' strokeWidth={1.9} aria-hidden='true' />
-              </ActionButton>
             </div>
             <p className='mt-1 text-[14px] text-text-muted'>
               답글 {commentCount}개 · 좋아요 {count}개
             </p>
           </footer>
 
-          {/* 댓글 섹션 */}
           {showComments && (
             <div className='mt-4 border-t border-border-subtle pt-4'>
-              {/* 댓글 입력 */}
               <div className='flex gap-2'>
                 <textarea
-                  className='flex-1 resize-none rounded-xl border border-border-subtle bg-bg-soft px-3 py-2 text-[14px] text-text-primary placeholder:text-text-muted outline-none focus:border-primary transition-colors'
+                  className='min-w-0 flex-1 resize-none rounded-xl border border-border-subtle bg-bg-soft px-3 py-2 text-[14px] text-text-primary placeholder:text-text-muted outline-none transition-colors focus:border-primary'
                   placeholder='댓글을 입력하세요...'
                   rows={1}
                   value={commentText}
-                  onChange={(e) => setCommentText(e.target.value)}
+                  onChange={(event) => setCommentText(event.target.value)}
                 />
                 <button
                   type='button'
-                  onClick={handleSubmitComment}
-                  disabled={submitting || !commentText.trim()}
+                  onClick={() => {
+                    handleSubmitComment().catch(() => {})
+                  }}
+                  disabled={submitting || commentText.trim().length === 0}
                   className='shrink-0 rounded-xl bg-primary px-4 text-[13px] font-semibold text-white transition-opacity hover:opacity-80 disabled:opacity-40'
                 >
                   게시
                 </button>
               </div>
+              {commentError.length > 0
+                ? <p className='mt-2 text-[13px] text-red-400'>{commentError}</p>
+                : null}
 
-              {/* 댓글 목록 */}
               <div className='mt-3 flex flex-col gap-3'>
                 {comments.length === 0
                   ? (
@@ -271,11 +265,10 @@ export function ThreadPost ({
                     )
                   : (
                       comments.map((comment) => {
-                        const myId = getUserIdFromToken()
                         const isMine = comment.author._id === myId
                         return (
                           <div key={comment._id} className='flex gap-2'>
-                            {comment.author.profileImage
+                            {comment.author.profileImage.length > 0
                               ? (
                                 <img
                                   src={comment.author.profileImage}
@@ -285,26 +278,28 @@ export function ThreadPost ({
                                 )
                               : (
                                 <div className='size-7 shrink-0 rounded-full bg-neutral-600 flex items-center justify-center text-xs font-semibold text-white'>
-                                  {comment.author.username[0]?.toUpperCase()}
+                                  {getInitial(comment.author.username)}
                                 </div>
                                 )}
-                            <div className='flex-1'>
-                              <div className='flex items-center justify-between'>
-                                <span className='text-[13px] font-semibold text-text-primary'>
+                            <div className='min-w-0 flex-1'>
+                              <div className='flex items-center justify-between gap-2'>
+                                <span className='truncate text-[13px] font-semibold text-text-primary'>
                                   {comment.author.username}
                                 </span>
                                 {isMine && (
                                   <button
                                     type='button'
-                                    onClick={() => handleDeleteComment(comment._id)}
-                                    className='text-text-muted hover:text-red-400 transition-colors'
+                                    onClick={() => {
+                                      handleDeleteComment(comment._id).catch(() => {})
+                                    }}
+                                    className='shrink-0 text-text-muted transition-colors hover:text-red-400'
                                     aria-label='댓글 삭제'
                                   >
                                     <Trash2 className='size-3.5' strokeWidth={1.9} />
                                   </button>
                                 )}
                               </div>
-                              <p className='text-[13px] text-gray-300'>{comment.content}</p>
+                              <p className='break-words text-[13px] text-gray-300'>{comment.content}</p>
                             </div>
                           </div>
                         )

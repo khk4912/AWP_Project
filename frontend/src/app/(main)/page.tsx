@@ -1,48 +1,16 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { RefreshCw } from 'lucide-react'
 import { ThreadComposer } from '@/components/ThreadComposer'
 import { ThreadPost } from '@/components/ThreadPost'
+import { getFeedPosts, getPosts, isApiError } from '@/lib/api'
+import { getAuthToken, getUserIdFromToken } from '@/lib/auth'
+import { likedByIncludes, relativeTime } from '@/lib/format'
+import type { Post } from '@/lib/types'
 import zIconSrc from '@assets/z-icon.png'
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000'
-
-type PostAuthor = {
-  _id: string
-  username: string
-  profileImage: string
-}
-
-type Post = {
-  _id: string
-  author: PostAuthor
-  content: string
-  imageUrl: string
-  likedBy: string[]
-  commentCount: number
-  createdAt: string
-}
-
-function relativeTime (dateStr: string): string {
-  const diff = Date.now() - new Date(dateStr).getTime()
-  const minutes = Math.floor(diff / 60000)
-  if (minutes < 60) return `${minutes}분`
-  const hours = Math.floor(minutes / 60)
-  if (hours < 24) return `${hours}시간`
-  const days = Math.floor(hours / 24)
-  return `${days}일`
-}
-
-function getUserIdFromToken (token: string): string {
-  try {
-    return JSON.parse(atob(token.split('.')[1])).userId ?? ''
-  } catch {
-    return ''
-  }
-}
 
 function SkeletonPost () {
   return (
@@ -91,67 +59,70 @@ function FeedView ({ userId, token }: { userId: string; token: string }) {
   const [loading, setLoading] = useState(false)
   const [refreshing, setRefreshing] = useState(false)
   const [visible, setVisible] = useState(true)
+  const [error, setError] = useState('')
 
-  async function fetchPosts (t: Tab, silent = false) {
-    if (!silent) setLoading(true)
-    else setRefreshing(true)
+  const fetchPosts = useCallback(async (nextTab: Tab, silent = false) => {
+    if (silent) setRefreshing(true)
+    else setLoading(true)
+    setError('')
 
     try {
-      const url = t === 'feed' ? `${API_URL}/posts/feed` : `${API_URL}/posts`
-      const headers: HeadersInit = t === 'feed' ? { Authorization: `Bearer ${token}` } : {}
-      const res = await fetch(url, { headers, cache: 'no-store' })
-      const data = await res.json()
-      setPosts(data.posts ?? [])
-    } catch {
+      const data = nextTab === 'feed' ? await getFeedPosts(token) : await getPosts()
+      setPosts(data.posts)
+    } catch (caughtError) {
+      setError(isApiError(caughtError) ? caughtError.message : '피드를 불러오지 못했습니다.')
+      setPosts([])
     } finally {
       setLoading(false)
       setRefreshing(false)
     }
-  }
+  }, [token])
 
   useEffect(() => {
     setVisible(false)
-    const timer = setTimeout(() => {
-      fetchPosts(tab).then(() => setVisible(true))
+    const timer = window.setTimeout(() => {
+      fetchPosts(tab)
+        .then(() => setVisible(true))
+        .catch(() => setVisible(true))
     }, 80)
-    return () => clearTimeout(timer)
-  }, [tab])
 
-  function handleTabChange (t: Tab) {
-    if (t !== tab) setTab(t)
+    return () => window.clearTimeout(timer)
+  }, [fetchPosts, tab])
+
+  function handleTabChange (nextTab: Tab) {
+    if (nextTab !== tab) setTab(nextTab)
   }
 
   return (
     <div className='mx-auto min-h-full w-full max-w-155 px-0 lg:px-8'>
       <section className='min-w-0'>
-
-        {/* 헤더 */}
         <header className='sticky top-0 z-10 border-b border-border-subtle bg-bg/95 backdrop-blur'>
           <div className='flex h-14 items-center justify-between px-4'>
             <h1 className='text-[18px] font-bold text-text-primary'>홈</h1>
             <button
               type='button'
               aria-label='새로고침'
-              onClick={() => fetchPosts(tab, true)}
+              onClick={() => {
+                fetchPosts(tab, true).catch(() => {})
+              }}
               className='inline-flex size-8 items-center justify-center rounded-full text-text-muted transition-colors hover:bg-white/10 hover:text-text-primary'
             >
               <RefreshCw className={`size-4 ${refreshing ? 'animate-spin' : ''}`} strokeWidth={2} />
             </button>
           </div>
 
-          {/* 탭 */}
           <div className='flex'>
-            {(['all', 'feed'] as Tab[]).map((t) => (
+            {(['all', 'feed'] as Tab[]).map((item) => (
               <button
-                key={t}
+                key={item}
                 type='button'
-                onClick={() => handleTabChange(t)}
+                onClick={() => handleTabChange(item)}
                 className={`relative flex-1 py-3 text-[15px] font-semibold transition-colors ${
-                  tab === t ? 'text-text-primary' : 'text-text-muted hover:text-text-primary hover:bg-white/5'
+                  tab === item ? 'text-text-primary' : 'text-text-muted hover:text-text-primary hover:bg-white/5'
                 }`}
               >
-                {t === 'all' ? '전체' : '팔로우'}
-                {tab === t && (
+                {item === 'all' ? '전체' : '팔로우'}
+                {tab === item && (
                   <span className='absolute bottom-0 left-1/2 h-1 w-12 -translate-x-1/2 rounded-full bg-primary' />
                 )}
               </button>
@@ -159,7 +130,11 @@ function FeedView ({ userId, token }: { userId: string; token: string }) {
           </div>
         </header>
 
-        <ThreadComposer onPost={() => fetchPosts(tab, true)} />
+        <ThreadComposer
+          onPost={() => {
+            fetchPosts(tab, true).catch(() => {})
+          }}
+        />
 
         <section
           aria-label='Z 피드'
@@ -173,29 +148,33 @@ function FeedView ({ userId, token }: { userId: string; token: string }) {
                 <SkeletonPost />
               </>
               )
-            : posts.length === 0
+            : error.length > 0
               ? (
-                <p className='px-4 py-10 text-center text-text-muted'>
-                  {tab === 'feed' ? '팔로우한 사람의 게시글이 없습니다.' : '게시글이 없습니다.'}
-                </p>
+                <p className='px-4 py-10 text-center text-red-400'>{error}</p>
                 )
-              : (
-                  posts.map((post) => (
-                    <ThreadPost
-                      key={post._id}
-                      postId={post._id}
-                      authorId={post.author._id}
-                      author={post.author.username}
-                      avatarUrl={post.author.profileImage}
-                      content={post.content}
-                      imageUrl={post.imageUrl || undefined}
-                      likeCount={post.likedBy.length}
-                      likedByMe={post.likedBy.includes(userId)}
-                      replyCount={post.commentCount.toString()}
-                      time={relativeTime(post.createdAt)}
-                    />
-                  ))
-                )}
+              : posts.length === 0
+                ? (
+                  <p className='px-4 py-10 text-center text-text-muted'>
+                    {tab === 'feed' ? '팔로우한 사람의 게시글이 없습니다.' : '게시글이 없습니다.'}
+                  </p>
+                  )
+                : (
+                    posts.map((post) => (
+                      <ThreadPost
+                        key={post._id}
+                        postId={post._id}
+                        authorId={post.author._id}
+                        author={post.author.username}
+                        avatarUrl={post.author.profileImage}
+                        content={post.content}
+                        imageUrl={post.imageUrl || undefined}
+                        likeCount={post.likedBy.length}
+                        likedByMe={likedByIncludes(post, userId)}
+                        replyCount={post.commentCount.toString()}
+                        time={relativeTime(post.createdAt)}
+                      />
+                    ))
+                  )}
         </section>
       </section>
     </div>
@@ -208,14 +187,24 @@ export default function HomePage () {
   const [ready, setReady] = useState(false)
 
   useEffect(() => {
-    const t = localStorage.getItem('token')
-    setToken(t)
-    if (t) setUserId(getUserIdFromToken(t))
-    setReady(true)
+    let mounted = true
+
+    Promise.resolve().then(() => {
+      if (!mounted) return
+
+      const authToken = getAuthToken()
+      setToken(authToken)
+      setUserId(getUserIdFromToken(authToken))
+      setReady(true)
+    }).catch(() => {})
+
+    return () => {
+      mounted = false
+    }
   }, [])
 
   if (!ready) return null
-  if (!token) return <LandingView />
+  if (token == null) return <LandingView />
 
   return <FeedView userId={userId} token={token} />
 }
