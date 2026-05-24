@@ -32,14 +32,6 @@ button:disabled {
   cursor: not-allowed;
 }
 
-@media (hover: hover) and (pointer: fine) {
-  button:not(:disabled):hover,
-  a[href].rounded-full:hover,
-  a[href].rounded-2xl:hover {
-    transform: translateY(-1px);
-  }
-}
-
 button:not(:disabled):active,
 a[href].rounded-full:active,
 a[href].rounded-2xl:active {
