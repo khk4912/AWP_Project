@@ -3,7 +3,7 @@
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 
-function getUserIdFromToken(token: string): string {
+function getUserIdFromToken (token: string): string {
   try {
     return JSON.parse(atob(token.split('.')[1])).userId ?? ''
   } catch {
@@ -11,7 +11,7 @@ function getUserIdFromToken(token: string): string {
   }
 }
 
-export default function ProfilePage() {
+export default function ProfilePage () {
   const router = useRouter()
 
   useEffect(() => {

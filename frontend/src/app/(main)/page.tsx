@@ -26,7 +26,7 @@ type Post = {
   createdAt: string
 }
 
-function relativeTime(dateStr: string): string {
+function relativeTime (dateStr: string): string {
   const diff = Date.now() - new Date(dateStr).getTime()
   const minutes = Math.floor(diff / 60000)
   if (minutes < 60) return `${minutes}분`
@@ -36,7 +36,7 @@ function relativeTime(dateStr: string): string {
   return `${days}일`
 }
 
-function getUserIdFromToken(token: string): string {
+function getUserIdFromToken (token: string): string {
   try {
     return JSON.parse(atob(token.split('.')[1])).userId ?? ''
   } catch {
@@ -44,7 +44,7 @@ function getUserIdFromToken(token: string): string {
   }
 }
 
-function SkeletonPost() {
+function SkeletonPost () {
   return (
     <div className='border-b border-border-subtle px-4 py-5 sm:px-0'>
       <div className='flex gap-3'>
@@ -59,7 +59,7 @@ function SkeletonPost() {
   )
 }
 
-function LandingView() {
+function LandingView () {
   return (
     <div className='flex min-h-screen flex-col items-center justify-center gap-6 px-4'>
       <Image src={zIconSrc} className='h-12 w-auto' alt='Z' priority />
@@ -85,14 +85,14 @@ function LandingView() {
 
 type Tab = 'all' | 'feed'
 
-function FeedView({ userId, token }: { userId: string; token: string }) {
+function FeedView ({ userId, token }: { userId: string; token: string }) {
   const [tab, setTab] = useState<Tab>('all')
   const [posts, setPosts] = useState<Post[]>([])
   const [loading, setLoading] = useState(false)
   const [refreshing, setRefreshing] = useState(false)
   const [visible, setVisible] = useState(true)
 
-  async function fetchPosts(t: Tab, silent = false) {
+  async function fetchPosts (t: Tab, silent = false) {
     if (!silent) setLoading(true)
     else setRefreshing(true)
 
@@ -117,7 +117,7 @@ function FeedView({ userId, token }: { userId: string; token: string }) {
     return () => clearTimeout(timer)
   }, [tab])
 
-  function handleTabChange(t: Tab) {
+  function handleTabChange (t: Tab) {
     if (t !== tab) setTab(t)
   }
 
@@ -165,40 +165,44 @@ function FeedView({ userId, token }: { userId: string; token: string }) {
           aria-label='Z 피드'
           className={`transition-opacity duration-200 ${visible ? 'opacity-100' : 'opacity-0'}`}
         >
-          {loading ? (
-            <>
-              <SkeletonPost />
-              <SkeletonPost />
-              <SkeletonPost />
-            </>
-          ) : posts.length === 0 ? (
-            <p className='px-4 py-10 text-center text-text-muted'>
-              {tab === 'feed' ? '팔로우한 사람의 게시글이 없습니다.' : '게시글이 없습니다.'}
-            </p>
-          ) : (
-            posts.map((post) => (
-              <ThreadPost
-                key={post._id}
-                postId={post._id}
-                authorId={post.author._id}
-                author={post.author.username}
-                avatarUrl={post.author.profileImage}
-                content={post.content}
-                imageUrl={post.imageUrl || undefined}
-                likeCount={post.likedBy.length}
-                likedByMe={post.likedBy.includes(userId)}
-                replyCount={post.commentCount.toString()}
-                time={relativeTime(post.createdAt)}
-              />
-            ))
-          )}
+          {loading
+            ? (
+              <>
+                <SkeletonPost />
+                <SkeletonPost />
+                <SkeletonPost />
+              </>
+              )
+            : posts.length === 0
+              ? (
+                <p className='px-4 py-10 text-center text-text-muted'>
+                  {tab === 'feed' ? '팔로우한 사람의 게시글이 없습니다.' : '게시글이 없습니다.'}
+                </p>
+                )
+              : (
+                  posts.map((post) => (
+                    <ThreadPost
+                      key={post._id}
+                      postId={post._id}
+                      authorId={post.author._id}
+                      author={post.author.username}
+                      avatarUrl={post.author.profileImage}
+                      content={post.content}
+                      imageUrl={post.imageUrl || undefined}
+                      likeCount={post.likedBy.length}
+                      likedByMe={post.likedBy.includes(userId)}
+                      replyCount={post.commentCount.toString()}
+                      time={relativeTime(post.createdAt)}
+                    />
+                  ))
+                )}
         </section>
       </section>
     </div>
   )
 }
 
-export default function HomePage() {
+export default function HomePage () {
   const [token, setToken] = useState<string | null>(null)
   const [userId, setUserId] = useState('')
   const [ready, setReady] = useState(false)

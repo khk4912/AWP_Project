@@ -15,10 +15,11 @@ type Post = {
   content: string
   imageUrl: string
   likedBy: string[]
+  commentCount?: number
   createdAt: string
 }
 
-function relativeTime(dateStr: string): string {
+function relativeTime (dateStr: string): string {
   const diff = Date.now() - new Date(dateStr).getTime()
   const minutes = Math.floor(diff / 60000)
   if (minutes < 60) return `${minutes}분`
@@ -28,7 +29,7 @@ function relativeTime(dateStr: string): string {
   return `${days}일`
 }
 
-async function fetchPosts(): Promise<Post[]> {
+async function fetchPosts (): Promise<Post[]> {
   try {
     const res = await fetch(`${API_URL}/posts`, { cache: 'no-store' })
     if (!res.ok) return []
@@ -39,7 +40,7 @@ async function fetchPosts(): Promise<Post[]> {
   }
 }
 
-export async function ArticleView() {
+export async function ArticleView () {
   const posts = await fetchPosts()
 
   return (
@@ -50,22 +51,27 @@ export async function ArticleView() {
         </header>
         <ThreadComposer />
         <section aria-label='Z 피드'>
-          {posts.length === 0 ? (
-            <p className='px-4 py-10 text-center text-text-muted'>게시글이 없습니다.</p>
-          ) : (
-            posts.map((post) => (
-              <ThreadPost
-                key={post._id}
-                author={post.author.username}
-                avatarUrl={post.author.profileImage}
-                content={post.content}
-                imageUrl={post.imageUrl || undefined}
-                likeCount={post.likedBy.length.toString()}
-                replyCount='0'
-                time={relativeTime(post.createdAt)}
-              />
-            ))
-          )}
+          {posts.length === 0
+            ? (
+              <p className='px-4 py-10 text-center text-text-muted'>게시글이 없습니다.</p>
+              )
+            : (
+                posts.map((post) => (
+                  <ThreadPost
+                    key={post._id}
+                    postId={post._id}
+                    authorId={post.author._id}
+                    author={post.author.username}
+                    avatarUrl={post.author.profileImage}
+                    content={post.content}
+                    imageUrl={post.imageUrl || undefined}
+                    likeCount={post.likedBy.length}
+                    likedByMe={false}
+                    replyCount={(post.commentCount ?? 0).toString()}
+                    time={relativeTime(post.createdAt)}
+                  />
+                ))
+              )}
         </section>
       </section>
       {/* <RightRail /> */}

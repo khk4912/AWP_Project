@@ -42,7 +42,7 @@ type ActionButtonProps = {
   children: ReactNode
 }
 
-function ActionButton({ label, onClick, children }: ActionButtonProps) {
+function ActionButton ({ label, onClick, children }: ActionButtonProps) {
   return (
     <button
       type='button'
@@ -55,7 +55,7 @@ function ActionButton({ label, onClick, children }: ActionButtonProps) {
   )
 }
 
-function VerifiedBadge() {
+function VerifiedBadge () {
   return (
     <span className='inline-flex size-3.5 items-center justify-center text-primary'>
       <BadgeCheck className='size-3.5 fill-primary text-bg' strokeWidth={2.2} aria-hidden='true' />
@@ -63,7 +63,7 @@ function VerifiedBadge() {
   )
 }
 
-function getUserIdFromToken(): string {
+function getUserIdFromToken (): string {
   try {
     const token = localStorage.getItem('token')
     if (!token) return ''
@@ -73,7 +73,7 @@ function getUserIdFromToken(): string {
   }
 }
 
-export function ThreadPost({
+export function ThreadPost ({
   postId,
   authorId,
   author,
@@ -95,7 +95,7 @@ export function ThreadPost({
   const [commentsFetched, setCommentsFetched] = useState(false)
   const [submitting, setSubmitting] = useState(false)
 
-  async function handleLike() {
+  async function handleLike () {
     const token = localStorage.getItem('token')
     if (!token) return
 
@@ -112,7 +112,7 @@ export function ThreadPost({
     })
   }
 
-  async function fetchComments() {
+  async function fetchComments () {
     const res = await fetch(`${API_URL}/comments/post/${postId}`)
     const data = await res.json()
     const list = Array.isArray(data) ? data : []
@@ -121,12 +121,12 @@ export function ThreadPost({
     setCommentsFetched(true)
   }
 
-  function handleToggleComments() {
+  function handleToggleComments () {
     if (!showComments && !commentsFetched) fetchComments()
     setShowComments(!showComments)
   }
 
-  async function handleSubmitComment() {
+  async function handleSubmitComment () {
     const token = localStorage.getItem('token')
     if (!token || !commentText.trim()) return
 
@@ -144,7 +144,7 @@ export function ThreadPost({
     setSubmitting(false)
   }
 
-  async function handleDeleteComment(commentId: string) {
+  async function handleDeleteComment (commentId: string) {
     const token = localStorage.getItem('token')
     if (!token) return
 
@@ -159,17 +159,19 @@ export function ThreadPost({
     <article className='relative border-b border-border-subtle px-4 py-5 sm:px-0'>
       <div className='flex gap-3'>
         <div className='flex shrink-0 flex-col items-center'>
-          {avatarUrl ? (
-            <img
-              src={avatarUrl}
-              alt={`${author} 프로필`}
-              className='size-9 rounded-full object-cover'
-            />
-          ) : (
-            <div className='size-9 rounded-full bg-neutral-600 flex items-center justify-center text-sm font-semibold text-white'>
-              {author[0]?.toUpperCase()}
-            </div>
-          )}
+          {avatarUrl
+            ? (
+              <img
+                src={avatarUrl}
+                alt={`${author} 프로필`}
+                className='size-9 rounded-full object-cover'
+              />
+              )
+            : (
+              <div className='size-9 rounded-full bg-neutral-600 flex items-center justify-center text-sm font-semibold text-white'>
+                {author[0]?.toUpperCase()}
+              </div>
+              )}
         </div>
 
         <div className='min-w-0 flex-1'>
@@ -198,13 +200,15 @@ export function ThreadPost({
             {content}
           </p>
 
-          {imageUrl != null ? (
-            <img
-              src={imageUrl}
-              alt='게시글 이미지'
-              className='mt-3 aspect-573/321 w-full rounded-lg border border-border-subtle object-cover'
-            />
-          ) : null}
+          {imageUrl != null
+            ? (
+              <img
+                src={imageUrl}
+                alt='게시글 이미지'
+                className='mt-3 aspect-573/321 w-full rounded-lg border border-border-subtle object-cover'
+              />
+              )
+            : null}
 
           <footer className='mt-3'>
             <div className='flex items-center gap-1'>
@@ -261,47 +265,51 @@ export function ThreadPost({
 
               {/* 댓글 목록 */}
               <div className='mt-3 flex flex-col gap-3'>
-                {comments.length === 0 ? (
-                  <p className='text-[13px] text-text-muted'>첫 댓글을 남겨보세요.</p>
-                ) : (
-                  comments.map((comment) => {
-                    const myId = getUserIdFromToken()
-                    const isMine = comment.author._id === myId
-                    return (
-                      <div key={comment._id} className='flex gap-2'>
-                        {comment.author.profileImage ? (
-                          <img
-                            src={comment.author.profileImage}
-                            alt={comment.author.username}
-                            className='size-7 shrink-0 rounded-full object-cover'
-                          />
-                        ) : (
-                          <div className='size-7 shrink-0 rounded-full bg-neutral-600 flex items-center justify-center text-xs font-semibold text-white'>
-                            {comment.author.username[0]?.toUpperCase()}
-                          </div>
-                        )}
-                        <div className='flex-1'>
-                          <div className='flex items-center justify-between'>
-                            <span className='text-[13px] font-semibold text-text-primary'>
-                              {comment.author.username}
-                            </span>
-                            {isMine && (
-                              <button
-                                type='button'
-                                onClick={() => handleDeleteComment(comment._id)}
-                                className='text-text-muted hover:text-red-400 transition-colors'
-                                aria-label='댓글 삭제'
-                              >
-                                <Trash2 className='size-3.5' strokeWidth={1.9} />
-                              </button>
-                            )}
-                          </div>
-                          <p className='text-[13px] text-gray-300'>{comment.content}</p>
-                        </div>
-                      </div>
+                {comments.length === 0
+                  ? (
+                    <p className='text-[13px] text-text-muted'>첫 댓글을 남겨보세요.</p>
                     )
-                  })
-                )}
+                  : (
+                      comments.map((comment) => {
+                        const myId = getUserIdFromToken()
+                        const isMine = comment.author._id === myId
+                        return (
+                          <div key={comment._id} className='flex gap-2'>
+                            {comment.author.profileImage
+                              ? (
+                                <img
+                                  src={comment.author.profileImage}
+                                  alt={comment.author.username}
+                                  className='size-7 shrink-0 rounded-full object-cover'
+                                />
+                                )
+                              : (
+                                <div className='size-7 shrink-0 rounded-full bg-neutral-600 flex items-center justify-center text-xs font-semibold text-white'>
+                                  {comment.author.username[0]?.toUpperCase()}
+                                </div>
+                                )}
+                            <div className='flex-1'>
+                              <div className='flex items-center justify-between'>
+                                <span className='text-[13px] font-semibold text-text-primary'>
+                                  {comment.author.username}
+                                </span>
+                                {isMine && (
+                                  <button
+                                    type='button'
+                                    onClick={() => handleDeleteComment(comment._id)}
+                                    className='text-text-muted hover:text-red-400 transition-colors'
+                                    aria-label='댓글 삭제'
+                                  >
+                                    <Trash2 className='size-3.5' strokeWidth={1.9} />
+                                  </button>
+                                )}
+                              </div>
+                              <p className='text-[13px] text-gray-300'>{comment.content}</p>
+                            </div>
+                          </div>
+                        )
+                      })
+                    )}
               </div>
             </div>
           )}

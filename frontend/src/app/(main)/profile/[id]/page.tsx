@@ -23,7 +23,7 @@ type Post = {
   createdAt: string
 }
 
-function relativeTime(dateStr: string): string {
+function relativeTime (dateStr: string): string {
   const diff = Date.now() - new Date(dateStr).getTime()
   const minutes = Math.floor(diff / 60000)
   if (minutes < 60) return `${minutes}분`
@@ -33,7 +33,7 @@ function relativeTime(dateStr: string): string {
   return `${days}일`
 }
 
-function getUserIdFromToken(token: string): string {
+function getUserIdFromToken (token: string): string {
   try {
     return JSON.parse(atob(token.split('.')[1])).userId ?? ''
   } catch {
@@ -41,7 +41,7 @@ function getUserIdFromToken(token: string): string {
   }
 }
 
-export default function ProfilePage() {
+export default function ProfilePage () {
   const { id } = useParams<{ id: string }>()
   const [myId, setMyId] = useState('')
   const [user, setUser] = useState<UserProfile | null>(null)
@@ -77,7 +77,7 @@ export default function ProfilePage() {
       .finally(() => setReady(true))
   }, [id])
 
-  async function handleFollow() {
+  async function handleFollow () {
     const token = localStorage.getItem('token')
     if (!token) return
 
@@ -112,17 +112,19 @@ export default function ProfilePage() {
       {/* 프로필 정보 */}
       <div className='py-6'>
         <div className='flex items-start gap-4'>
-          {user.profileImage ? (
-            <img
-              src={user.profileImage}
-              alt={user.username}
-              className='size-20 rounded-full object-cover'
-            />
-          ) : (
-            <div className='size-20 rounded-full bg-neutral-600 flex items-center justify-center text-2xl font-bold text-white'>
-              {user.username[0]?.toUpperCase()}
-            </div>
-          )}
+          {user.profileImage
+            ? (
+              <img
+                src={user.profileImage}
+                alt={user.username}
+                className='size-20 rounded-full object-cover'
+              />
+              )
+            : (
+              <div className='size-20 rounded-full bg-neutral-600 flex items-center justify-center text-2xl font-bold text-white'>
+                {user.username[0]?.toUpperCase()}
+              </div>
+              )}
 
           <div className='flex-1'>
             <h2 className='text-xl font-bold text-text-primary'>{user.username}</h2>
@@ -148,50 +150,54 @@ export default function ProfilePage() {
 
         {/* 버튼 */}
         <div className='mt-4'>
-          {isMyProfile ? (
-            <button
-              type='button'
-              className='w-full rounded-xl border border-border-subtle py-2 text-[14px] font-semibold text-text-primary transition-colors hover:bg-white/5'
-            >
-              프로필 편집
-            </button>
-          ) : (
-            <button
-              type='button'
-              onClick={handleFollow}
-              className={`w-full rounded-xl py-2 text-[14px] font-semibold transition-colors ${
+          {isMyProfile
+            ? (
+              <button
+                type='button'
+                className='w-full rounded-xl border border-border-subtle py-2 text-[14px] font-semibold text-text-primary transition-colors hover:bg-white/5'
+              >
+                프로필 편집
+              </button>
+              )
+            : (
+              <button
+                type='button'
+                onClick={handleFollow}
+                className={`w-full rounded-xl py-2 text-[14px] font-semibold transition-colors ${
                 isFollowing
                   ? 'border border-border-subtle text-text-primary hover:bg-white/5'
                   : 'bg-primary text-white hover:opacity-80'
               }`}
-            >
-              {isFollowing ? '팔로잉' : '팔로우'}
-            </button>
-          )}
+              >
+                {isFollowing ? '팔로잉' : '팔로우'}
+              </button>
+              )}
         </div>
       </div>
 
       {/* 게시글 목록 */}
       <div className='border-t border-border-subtle'>
-        {posts.length === 0 ? (
-          <p className='py-10 text-center text-text-muted'>게시글이 없습니다.</p>
-        ) : (
-          posts.map((post) => (
-            <ThreadPost
-              key={post._id}
-              postId={post._id}
-              authorId={post.author._id}
-              author={post.author.username}
-              avatarUrl={post.author.profileImage}
-              content={post.content}
-              imageUrl={post.imageUrl || undefined}
-              likeCount={post.likedBy.length}
-              likedByMe={post.likedBy.includes(myId)}
-              replyCount={post.commentCount.toString()}
-              time={relativeTime(post.createdAt)}
-            />
-          ))
-        )}
+        {posts.length === 0
+          ? (
+            <p className='py-10 text-center text-text-muted'>게시글이 없습니다.</p>
+            )
+          : (
+              posts.map((post) => (
+                <ThreadPost
+                  key={post._id}
+                  postId={post._id}
+                  authorId={post.author._id}
+                  author={post.author.username}
+                  avatarUrl={post.author.profileImage}
+                  content={post.content}
+                  imageUrl={post.imageUrl || undefined}
+                  likeCount={post.likedBy.length}
+                  likedByMe={post.likedBy.includes(myId)}
+                  replyCount={post.commentCount.toString()}
+                  time={relativeTime(post.createdAt)}
+                />
+              ))
+            )}
       </div>
     </div>
   )

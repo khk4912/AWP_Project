@@ -1,23 +1,46 @@
-import globals from 'globals'
-import reactHooks from 'eslint-plugin-react-hooks'
-import tseslint from 'typescript-eslint'
 import { defineConfig, globalIgnores } from 'eslint/config'
+import nextVitals from 'eslint-config-next/core-web-vitals'
+import nextTs from 'eslint-config-next/typescript'
+import neostandard from 'neostandard'
+import tseslint from 'typescript-eslint'
 
-const ignores = ['.next', 'dist', 'node_modules', 'next-env.d.ts']
+const ignores = [
+  '.next/**',
+  'out/**',
+  'build/**',
+  'next-env.d.ts',
+]
 
-export default defineConfig([
-  globalIgnores(ignores),
-  ...tseslint.configs.recommendedTypeChecked,
-  reactHooks.configs.flat.recommended,
+// const tailwindCssConfigPath = fileURLToPath(new URL('./app/globals.css', import.meta.url))
+
+const eslintConfig = defineConfig([
+  ...nextVitals,
+  ...nextTs,
+
+  // Override default ignores of eslint-config-next.
+  globalIgnores([
+    // global ignores of eslint-config-next
+    ...ignores
+  ]),
+  ...neostandard(
+    {
+      files: ['**/*.{ts,tsx}'],
+      ts: true,
+      ignores
+    }
+
+  ),
   {
-    files: ['**/*.{ts,tsx}'],
+    extends: [
+      tseslint.configs.recommendedTypeChecked
+    ],
     languageOptions: {
-      ecmaVersion: 2020,
-      globals: { ...globals.browser, ...globals.node },
       parserOptions: {
         project: ['./tsconfig.json'],
-        tsconfigRootDir: import.meta.dirname,
-      }
+      },
     },
   },
+
 ])
+
+export default eslintConfig

@@ -11,7 +11,7 @@ type UserInfo = {
   profileImage: string
 }
 
-function getUserIdFromToken(): string {
+function getUserIdFromToken (): string {
   try {
     const token = localStorage.getItem('token')
     if (!token) return ''
@@ -21,7 +21,7 @@ function getUserIdFromToken(): string {
   }
 }
 
-export function ThreadComposer({ onPost }: { onPost?: () => void }) {
+export function ThreadComposer ({ onPost }: { onPost?: () => void }) {
   const [content, setContent] = useState('')
   const [loading, setLoading] = useState(false)
   const [user, setUser] = useState<UserInfo | null>(null)
@@ -35,7 +35,7 @@ export function ThreadComposer({ onPost }: { onPost?: () => void }) {
       .catch(() => {})
   }, [])
 
-  async function handleSubmit() {
+  async function handleSubmit () {
     const token = localStorage.getItem('token')
     if (!token || !content.trim()) return
 
@@ -64,17 +64,19 @@ export function ThreadComposer({ onPost }: { onPost?: () => void }) {
   return (
     <section className='border-b border-border-subtle px-4 py-5 sm:px-0 sm:py-[30px]'>
       <div className='flex gap-3'>
-        {user?.profileImage ? (
-          <img
-            src={user.profileImage}
-            alt='내 프로필'
-            className='size-9 shrink-0 rounded-full object-cover'
-          />
-        ) : (
-          <div className='size-9 shrink-0 rounded-full bg-neutral-600 flex items-center justify-center text-sm font-semibold text-white'>
-            {user?.username?.[0]?.toUpperCase() ?? 'Z'}
-          </div>
-        )}
+        {user?.profileImage
+          ? (
+            <img
+              src={user.profileImage}
+              alt='내 프로필'
+              className='size-9 shrink-0 rounded-full object-cover'
+            />
+            )
+          : (
+            <div className='size-9 shrink-0 rounded-full bg-neutral-600 flex items-center justify-center text-sm font-semibold text-white'>
+              {user?.username?.[0]?.toUpperCase() ?? 'Z'}
+            </div>
+            )}
 
         <div className='min-w-0 flex-1'>
           <div className='flex items-center justify-between gap-4'>
@@ -109,7 +111,8 @@ export function ThreadComposer({ onPost }: { onPost?: () => void }) {
 
             <span className={`text-[12px] tabular-nums ${
               isOverLimit ? 'text-red-400' : isNearLimit ? 'text-yellow-400' : 'text-text-muted'
-            }`}>
+            }`}
+            >
               {remaining}
             </span>
           </div>

@@ -8,7 +8,7 @@ import zIconSrc from '@assets/z-icon.png'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000'
 
-export default function RegisterPage() {
+export default function RegisterPage () {
   const router = useRouter()
   const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
@@ -16,7 +16,7 @@ export default function RegisterPage() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit (e: React.FormEvent) {
     e.preventDefault()
     setError('')
     setLoading(true)
