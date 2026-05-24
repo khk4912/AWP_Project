@@ -10,9 +10,10 @@ import {
   Heart,
   MessageCircle,
   MoreHorizontal,
+  Pencil,
   Trash2
 } from 'lucide-react'
-import { createComment, deleteComment, deletePost, getComments, likePost, unlikePost } from '@/lib/api'
+import { createComment, deleteComment, deletePost, getComments, likePost, unlikePost, updatePost } from '@/lib/api'
 import { getAuthToken, getUserIdFromToken } from '@/lib/auth'
 import { getInitial } from '@/lib/format'
 import type { Comment } from '@/lib/types'
@@ -32,6 +33,7 @@ type ThreadPostProps = {
   initialCommentsOpen?: boolean
   enableDetailLink?: boolean
   onDeleted?: (postId: string) => void
+  allowEdit?: boolean
 }
 
 type ActionButtonProps = {
@@ -75,7 +77,8 @@ export function ThreadPost ({
   verified = false,
   initialCommentsOpen = false,
   enableDetailLink = true,
-  onDeleted
+  onDeleted,
+  allowEdit = false
 }: ThreadPostProps) {
   const router = useRouter()
   const [liked, setLiked] = useState(likedByMe)
@@ -90,6 +93,10 @@ export function ThreadPost ({
   const [actionMenuOpen, setActionMenuOpen] = useState(false)
   const [deleting, setDeleting] = useState(false)
   const [postError, setPostError] = useState('')
+  const [postContent, setPostContent] = useState(content)
+  const [draftContent, setDraftContent] = useState(content)
+  const [editing, setEditing] = useState(false)
+  const [savingEdit, setSavingEdit] = useState(false)
 
   async function handleLike () {
     const token = getAuthToken()
@@ -188,6 +195,33 @@ export function ThreadPost ({
     }
   }
 
+  function handleStartEdit () {
+    setDraftContent(postContent)
+    setPostError('')
+    setActionMenuOpen(false)
+    setEditing(true)
+  }
+
+  async function handleSaveEdit () {
+    const token = getAuthToken()
+    const nextContent = draftContent.trim()
+    if (token == null || nextContent.length === 0 || savingEdit) return
+
+    setSavingEdit(true)
+    setPostError('')
+
+    try {
+      await updatePost(token, postId, { content: nextContent, imageUrl })
+      setPostContent(nextContent)
+      setDraftContent(nextContent)
+      setEditing(false)
+    } catch {
+      setPostError('게시글을 수정하지 못했습니다.')
+    } finally {
+      setSavingEdit(false)
+    }
+  }
+
   const myId = getUserIdFromToken()
   const canManagePost = myId === authorId
 
@@ -196,6 +230,11 @@ export function ThreadPost ({
       fetchComments().catch(() => {})
     }
   }, [initialCommentsOpen, commentsFetched, fetchComments])
+
+  useEffect(() => {
+    setPostContent(content)
+    setDraftContent(content)
+  }, [content])
 
   return (
     <article
@@ -250,6 +289,14 @@ export function ThreadPost ({
                         <div className='absolute right-0 top-8 z-20 w-32 overflow-hidden rounded-xl border border-border-subtle bg-bg-soft shadow-2xl'>
                           <button
                             type='button'
+                            onClick={handleStartEdit}
+                            className={`${allowEdit ? 'flex' : 'hidden'} w-full items-center gap-2 px-3 py-2 text-left text-[13px] font-semibold text-text-primary transition-colors hover:bg-white/10`}
+                          >
+                            <Pencil className='size-4' strokeWidth={1.9} aria-hidden='true' />
+                            수정
+                          </button>
+                          <button
+                            type='button'
                             disabled={deleting}
                             onClick={() => {
                               handleDeletePost().catch(() => {})
@@ -268,9 +315,44 @@ export function ThreadPost ({
             </div>
           </header>
 
-          <p className='mt-1 whitespace-pre-line break-words text-[15px] leading-6 text-gray-100'>
-            {content}
-          </p>
+          {editing
+            ? (
+              <div className='mt-2'>
+                <textarea
+                  className='min-h-28 w-full resize-none rounded-xl border border-border-subtle bg-bg-soft px-3 py-2 text-[15px] leading-6 text-text-primary outline-none transition-colors focus:border-primary'
+                  value={draftContent}
+                  onChange={(event) => setDraftContent(event.target.value)}
+                />
+                <div className='mt-2 flex justify-end gap-2'>
+                  <button
+                    type='button'
+                    onClick={() => {
+                      setDraftContent(postContent)
+                      setEditing(false)
+                      setPostError('')
+                    }}
+                    className='rounded-full border border-border-subtle px-4 py-2 text-[13px] font-semibold text-text-primary transition-colors hover:bg-white/5'
+                  >
+                    취소
+                  </button>
+                  <button
+                    type='button'
+                    disabled={savingEdit || draftContent.trim().length === 0}
+                    onClick={() => {
+                      handleSaveEdit().catch(() => {})
+                    }}
+                    className='rounded-full bg-primary px-4 py-2 text-[13px] font-semibold text-white transition-opacity hover:opacity-80 disabled:opacity-40'
+                  >
+                    {savingEdit ? '저장 중...' : '저장'}
+                  </button>
+                </div>
+              </div>
+              )
+            : (
+              <p className='mt-1 whitespace-pre-line break-words text-[15px] leading-6 text-gray-100'>
+                {postContent}
+              </p>
+              )}
 
           {imageUrl != null && imageUrl.length > 0
             ? (

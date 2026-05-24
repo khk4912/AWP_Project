@@ -71,6 +71,7 @@ export default function PostDetailPage () {
         time={relativeTime(post.createdAt)}
         initialCommentsOpen
         enableDetailLink={false}
+        allowEdit
       />
     </div>
   )

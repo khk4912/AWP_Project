@@ -171,6 +171,19 @@ export function deletePost (token: string, postId: string): Promise<IdResponse> 
   })
 }
 
+type UpdatePostInput = {
+  content?: string
+  imageUrl?: string
+}
+
+export function updatePost (token: string, postId: string, data: UpdatePostInput): Promise<IdResponse> {
+  return apiFetch<IdResponse>(`/posts/${postId}`, {
+    method: 'PATCH',
+    token,
+    body: data,
+  })
+}
+
 export function likePost (token: string, postId: string): Promise<IdResponse> {
   return apiFetch<IdResponse>(`/posts/${postId}/like`, {
     method: 'POST',
