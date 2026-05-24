@@ -1,0 +1,38 @@
+# Dependencies
+node_modules
+**/node_modules
+
+# Build outputs
+dist
+**/dist
+build
+**/build
+.next
+**/.next
+coverage
+**/coverage
+
+# Package manager cache
+.pnpm-store
+**/.pnpm-store
+
+# Environment files and secrets
+.env
+.env.*
+**/.env
+**/.env.*
+!**/.env.example
+!**/.env.docker.example
+
+# Logs
+logs
+**/logs
+*.log
+
+# Git and editor files
+.git
+.gitignore
+.vscode
+.idea
+.DS_Store
+

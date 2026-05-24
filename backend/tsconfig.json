@@ -15,7 +15,7 @@
     "skipLibCheck": true,
     "strict": true,
     "moduleResolution": "node",
-    "types": ["node", "jest", "multer"]
+    "types": ["node", "jest", "express", "multer"]
   },
   "include": ["src/**/*", "test/**/*"],
   "exclude": ["node_modules", "dist"]
