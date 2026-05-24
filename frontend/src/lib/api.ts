@@ -123,17 +123,31 @@ export function getUser (userId: string): Promise<UserProfile> {
   return apiFetch<UserProfile>(`/users/${userId}`, { cache: 'no-store' })
 }
 
-export function getPosts (token?: string | null): Promise<PostsResponse> {
-  return apiFetch<PostsResponse>('/posts', {
+type GetPostsOptions = {
+  limit?: number
+  skip?: number
+  token?: string | null
+}
+
+function withPagination (path: string, options: GetPostsOptions = {}): string {
+  const params = new URLSearchParams()
+  if (options.skip !== undefined) params.set('skip', options.skip.toString())
+  if (options.limit !== undefined) params.set('limit', options.limit.toString())
+  const query = params.toString()
+  return query.length > 0 ? `${path}?${query}` : path
+}
+
+export function getPosts (options: GetPostsOptions = {}): Promise<PostsResponse> {
+  return apiFetch<PostsResponse>(withPagination('/posts', options), {
     cache: 'no-store',
-    token,
+    token: options.token
   })
 }
 
-export function getFeedPosts (token: string): Promise<PostsResponse> {
-  return apiFetch<PostsResponse>('/posts/feed', {
+export function getFeedPosts (token: string, options: GetPostsOptions = {}): Promise<PostsResponse> {
+  return apiFetch<PostsResponse>(withPagination('/posts/feed', options), {
     cache: 'no-store',
-    token,
+    token
   })
 }
 

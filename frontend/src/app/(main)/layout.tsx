@@ -3,15 +3,15 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import {
-  Bookmark,
   CircleUserRound,
   Home,
   LogOut,
-  MessageCircle,
   Search,
   type LucideIcon,
 } from 'lucide-react'
 import { usePathname } from 'next/navigation'
+import { RightRail } from '@/components/RightRail'
+import { clearAuthToken } from '@/lib/auth'
 
 import zIconSrc from '@assets/z-icon.png'
 
@@ -24,8 +24,6 @@ type LayoutItemProps = {
 const navItems: LayoutItemProps[] = [
   { title: '홈', href: '/', Icon: Home },
   { title: '탐색', href: '/search', Icon: Search },
-  { title: '북마크', href: '/bookmark', Icon: Bookmark },
-  { title: '채팅', href: '/chat', Icon: MessageCircle },
   { title: '프로필', href: '/profile', Icon: CircleUserRound },
 ]
 
@@ -89,7 +87,7 @@ function Logo () {
 
 function LogoutButton () {
   function handleLogout () {
-    localStorage.removeItem('token')
+    clearAuthToken()
     window.location.href = '/'
   }
 
@@ -128,7 +126,7 @@ function DesktopSidebar () {
 function MobileBottomNav () {
   return (
     <nav className='fixed inset-x-0 bottom-0 z-50 border-t border-border-subtle bg-bg/95 px-2 pt-2 pb-[calc(env(safe-area-inset-bottom)+0.5rem)] backdrop-blur lg:hidden'>
-      <div className='grid grid-cols-5 gap-1'>
+      <div className='grid grid-cols-3 gap-1'>
         {navItems.map((item) => (
           <MobileLayoutItem key={item.href} {...item} />
         ))}
@@ -145,6 +143,7 @@ export default function Layout ({ children }: { children: React.ReactNode }) {
       <main className='min-w-0 flex-1 overflow-y-auto pb-[calc(env(safe-area-inset-bottom)+5rem)] lg:pb-0'>
         {children}
       </main>
+      <RightRail />
 
       <MobileBottomNav />
     </div>

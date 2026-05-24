@@ -2,11 +2,11 @@
 
 import Image from 'next/image'
 import { useState } from 'react'
+import type { FormEvent } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { isApiError, register } from '@/lib/api'
 import zIconSrc from '@assets/z-icon.png'
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000'
 
 export default function RegisterPage () {
   const router = useRouter()
@@ -16,31 +16,16 @@ export default function RegisterPage () {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
-  async function handleSubmit (e: React.FormEvent) {
-    e.preventDefault()
+  async function handleSubmit (event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
     setError('')
     setLoading(true)
 
     try {
-      const res = await fetch(`${API_URL}/auth/register`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, email, password }),
-      })
-
-      const data = await res.json()
-
-      if (!res.ok) {
-        const msg = Array.isArray(data.error?.message)
-          ? data.error.message[0]
-          : (data.error?.message ?? '회원가입에 실패했습니다.')
-        setError(msg)
-        return
-      }
-
+      await register(username, email, password)
       router.push('/login')
-    } catch {
-      setError('서버에 연결할 수 없습니다.')
+    } catch (caughtError) {
+      setError(isApiError(caughtError) ? caughtError.message : '회원가입에 실패했습니다.')
     } finally {
       setLoading(false)
     }
@@ -55,35 +40,38 @@ export default function RegisterPage () {
 
         <h1 className='mb-6 text-center text-2xl font-bold text-text-primary'>회원가입</h1>
 
-        <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
+        <form
+          onSubmit={(event) => {
+            handleSubmit(event).catch(() => {})
+          }}
+          className='flex flex-col gap-4'
+        >
           <input
             type='text'
             placeholder='사용자 이름'
             value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            onChange={(event) => setUsername(event.target.value)}
             required
-            className='w-full rounded-xl border border-border-subtle bg-bg-soft px-4 py-3 text-[15px] text-text-primary placeholder:text-text-muted outline-none focus:border-primary transition-colors'
+            className='w-full rounded-xl border border-border-subtle bg-bg-soft px-4 py-3 text-[15px] text-text-primary placeholder:text-text-muted outline-none transition-colors focus:border-primary'
           />
           <input
             type='email'
             placeholder='이메일'
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(event) => setEmail(event.target.value)}
             required
-            className='w-full rounded-xl border border-border-subtle bg-bg-soft px-4 py-3 text-[15px] text-text-primary placeholder:text-text-muted outline-none focus:border-primary transition-colors'
+            className='w-full rounded-xl border border-border-subtle bg-bg-soft px-4 py-3 text-[15px] text-text-primary placeholder:text-text-muted outline-none transition-colors focus:border-primary'
           />
           <input
             type='password'
             placeholder='비밀번호 (6자 이상)'
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(event) => setPassword(event.target.value)}
             required
-            className='w-full rounded-xl border border-border-subtle bg-bg-soft px-4 py-3 text-[15px] text-text-primary placeholder:text-text-muted outline-none focus:border-primary transition-colors'
+            className='w-full rounded-xl border border-border-subtle bg-bg-soft px-4 py-3 text-[15px] text-text-primary placeholder:text-text-muted outline-none transition-colors focus:border-primary'
           />
 
-          {error && (
-            <p className='text-sm text-red-400'>{error}</p>
-          )}
+          {error.length > 0 ? <p className='text-sm text-red-400'>{error}</p> : null}
 
           <button
             type='submit'
