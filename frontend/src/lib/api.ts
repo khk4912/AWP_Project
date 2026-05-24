@@ -3,6 +3,7 @@ import type {
   FollowRelations,
   IdResponse,
   LoginResponse,
+  Post,
   PostsResponse,
   UserProfile,
   UserSummary,
@@ -149,6 +150,10 @@ export function getFeedPosts (token: string, options: GetPostsOptions = {}): Pro
     cache: 'no-store',
     token
   })
+}
+
+export function getPost (postId: string): Promise<Post> {
+  return apiFetch<Post>(`/posts/${postId}`, { cache: 'no-store' })
 }
 
 export function createPost (token: string, content: string): Promise<IdResponse> {

@@ -170,7 +170,7 @@ function FeedView ({ userId, token }: { userId: string; token: string }) {
                         imageUrl={post.imageUrl || undefined}
                         likeCount={post.likedBy.length}
                         likedByMe={likedByIncludes(post, userId)}
-                        replyCount={post.commentCount.toString()}
+                        replyCount={(post.commentCount ?? 0).toString()}
                         time={relativeTime(post.createdAt)}
                       />
                     ))

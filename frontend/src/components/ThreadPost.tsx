@@ -1,8 +1,10 @@
 'use client'
 
-import { useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
+import type { MouseEvent } from 'react'
 import type { ReactNode } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import {
   BadgeCheck,
   Heart,
@@ -27,6 +29,8 @@ type ThreadPostProps = {
   replyCount: string
   time: string
   verified?: boolean
+  initialCommentsOpen?: boolean
+  enableDetailLink?: boolean
 }
 
 type ActionButtonProps = {
@@ -67,11 +71,14 @@ export function ThreadPost ({
   likedByMe,
   replyCount,
   time,
-  verified = false
+  verified = false,
+  initialCommentsOpen = false,
+  enableDetailLink = true
 }: ThreadPostProps) {
+  const router = useRouter()
   const [liked, setLiked] = useState(likedByMe)
   const [count, setCount] = useState(likeCount)
-  const [showComments, setShowComments] = useState(false)
+  const [showComments, setShowComments] = useState(initialCommentsOpen)
   const [comments, setComments] = useState<Comment[]>([])
   const [commentCount, setCommentCount] = useState(replyCount)
   const [commentText, setCommentText] = useState('')
@@ -97,7 +104,7 @@ export function ThreadPost ({
     }
   }
 
-  async function fetchComments () {
+  const fetchComments = useCallback(async () => {
     setCommentError('')
 
     try {
@@ -108,11 +115,21 @@ export function ThreadPost ({
     } catch {
       setCommentError('댓글을 불러오지 못했습니다.')
     }
-  }
+  }, [postId])
 
   function handleToggleComments () {
     if (!showComments && !commentsFetched) fetchComments().catch(() => {})
     setShowComments(!showComments)
+  }
+
+  function handleArticleClick (event: MouseEvent<HTMLElement>) {
+    if (!enableDetailLink) return
+
+    const target = event.target
+    if (!(target instanceof Element)) return
+    if (target.closest('a, button, input, textarea, select, [role="button"]') != null) return
+
+    router.push(`/posts/${postId}`)
   }
 
   async function handleSubmitComment () {
@@ -148,8 +165,19 @@ export function ThreadPost ({
 
   const myId = getUserIdFromToken()
 
+  useEffect(() => {
+    if (initialCommentsOpen && !commentsFetched) {
+      fetchComments().catch(() => {})
+    }
+  }, [initialCommentsOpen, commentsFetched, fetchComments])
+
   return (
-    <article className='relative border-b border-border-subtle px-4 py-5 sm:px-0'>
+    <article
+      onClick={handleArticleClick}
+      className={`relative border-b border-border-subtle px-4 py-5 sm:px-0 ${
+        enableDetailLink ? 'cursor-pointer transition-colors hover:bg-white/[0.03]' : ''
+      }`}
+    >
       <div className='flex gap-3'>
         <div className='flex shrink-0 flex-col items-center'>
           {avatarUrl.length > 0

@@ -24,7 +24,7 @@ export type Post = {
   content: string
   imageUrl: string
   likedBy: Array<string | UserSummary>
-  commentCount: number
+  commentCount?: number
   createdAt: string
   updatedAt?: string
 }

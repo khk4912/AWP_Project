@@ -182,7 +182,7 @@ export default function ProfilePage () {
                   imageUrl={post.imageUrl || undefined}
                   likeCount={post.likedBy.length}
                   likedByMe={likedByIncludes(post, myId)}
-                  replyCount={post.commentCount.toString()}
+                  replyCount={(post.commentCount ?? 0).toString()}
                   time={relativeTime(post.createdAt)}
                 />
               ))
