@@ -72,13 +72,13 @@ function Logo () {
   return (
     <Link
       href='/'
-      aria-label='Z 홈'
+      aria-label='G 홈'
       className='inline-flex size-12 items-center justify-center rounded-full transition-colors hover:bg-white/10'
     >
       <Image
         src={zIconSrc}
         className='h-7 w-auto object-contain'
-        alt='Z'
+        alt='G'
         priority
       />
     </Link>

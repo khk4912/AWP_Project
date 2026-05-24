@@ -30,7 +30,7 @@ function SkeletonPost () {
 function LandingView () {
   return (
     <div className='flex min-h-screen flex-col items-center justify-center gap-6 px-4'>
-      <Image src={zIconSrc} className='h-12 w-auto' alt='Z' priority />
+      <Image src={zIconSrc} className='h-12 w-auto' alt='G' priority />
       <h1 className='text-2xl font-bold text-text-primary'>Z에 오신 것을 환영합니다</h1>
       <p className='text-text-muted'>지금 일어나고 있는 일을 확인해보세요.</p>
       <div className='flex w-full max-w-xs flex-col gap-3'>

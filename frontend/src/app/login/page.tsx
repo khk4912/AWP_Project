@@ -36,7 +36,7 @@ export default function LoginPage () {
     <div className='flex min-h-screen items-center justify-center bg-bg px-4'>
       <div className='w-full max-w-sm'>
         <div className='mb-8 flex justify-center'>
-          <Image src={zIconSrc} className='h-10 w-auto' alt='Z' priority />
+          <Image src={zIconSrc} className='h-10 w-auto' alt='G' priority />
         </div>
 
         <h1 className='mb-6 text-center text-2xl font-bold text-text-primary'>로그인</h1>
