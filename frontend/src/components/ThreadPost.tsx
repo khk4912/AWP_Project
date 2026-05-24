@@ -12,7 +12,7 @@ import {
   MoreHorizontal,
   Trash2
 } from 'lucide-react'
-import { createComment, deleteComment, getComments, likePost, unlikePost } from '@/lib/api'
+import { createComment, deleteComment, deletePost, getComments, likePost, unlikePost } from '@/lib/api'
 import { getAuthToken, getUserIdFromToken } from '@/lib/auth'
 import { getInitial } from '@/lib/format'
 import type { Comment } from '@/lib/types'
@@ -31,6 +31,7 @@ type ThreadPostProps = {
   verified?: boolean
   initialCommentsOpen?: boolean
   enableDetailLink?: boolean
+  onDeleted?: (postId: string) => void
 }
 
 type ActionButtonProps = {
@@ -73,7 +74,8 @@ export function ThreadPost ({
   time,
   verified = false,
   initialCommentsOpen = false,
-  enableDetailLink = true
+  enableDetailLink = true,
+  onDeleted
 }: ThreadPostProps) {
   const router = useRouter()
   const [liked, setLiked] = useState(likedByMe)
@@ -85,6 +87,9 @@ export function ThreadPost ({
   const [commentsFetched, setCommentsFetched] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [commentError, setCommentError] = useState('')
+  const [actionMenuOpen, setActionMenuOpen] = useState(false)
+  const [deleting, setDeleting] = useState(false)
+  const [postError, setPostError] = useState('')
 
   async function handleLike () {
     const token = getAuthToken()
@@ -163,7 +168,28 @@ export function ThreadPost ({
     }
   }
 
+  async function handleDeletePost () {
+    const token = getAuthToken()
+    if (token == null || deleting) return
+    if (!window.confirm('게시글을 삭제할까요?')) return
+
+    setDeleting(true)
+    setPostError('')
+
+    try {
+      await deletePost(token, postId)
+      setActionMenuOpen(false)
+      if (onDeleted != null) onDeleted(postId)
+      else router.push('/')
+    } catch {
+      setPostError('게시글을 삭제하지 못했습니다.')
+    } finally {
+      setDeleting(false)
+    }
+  }
+
   const myId = getUserIdFromToken()
+  const canManagePost = myId === authorId
 
   useEffect(() => {
     if (initialCommentsOpen && !commentsFetched) {
@@ -207,13 +233,38 @@ export function ThreadPost ({
             </div>
             <div className='flex shrink-0 items-center gap-2 text-text-muted'>
               <time className='text-[13px]'>{time}</time>
-              <button
-                type='button'
-                aria-label='더보기'
-                className='inline-flex size-7 items-center justify-center rounded-full transition-colors hover:bg-white/10 hover:text-text-primary'
-              >
-                <MoreHorizontal className='size-5' strokeWidth={2} aria-hidden='true' />
-              </button>
+              {canManagePost
+                ? (
+                  <div className='relative'>
+                    <button
+                      type='button'
+                      aria-label='더보기'
+                      aria-expanded={actionMenuOpen}
+                      onClick={() => setActionMenuOpen(!actionMenuOpen)}
+                      className='inline-flex size-7 items-center justify-center rounded-full transition-colors hover:bg-white/10 hover:text-text-primary'
+                    >
+                      <MoreHorizontal className='size-5' strokeWidth={2} aria-hidden='true' />
+                    </button>
+                    {actionMenuOpen
+                      ? (
+                        <div className='absolute right-0 top-8 z-20 w-32 overflow-hidden rounded-xl border border-border-subtle bg-bg-soft shadow-2xl'>
+                          <button
+                            type='button'
+                            disabled={deleting}
+                            onClick={() => {
+                              handleDeletePost().catch(() => {})
+                            }}
+                            className='flex w-full items-center gap-2 px-3 py-2 text-left text-[13px] font-semibold text-red-400 transition-colors hover:bg-white/10 disabled:opacity-50'
+                          >
+                            <Trash2 className='size-4' strokeWidth={1.9} aria-hidden='true' />
+                            {deleting ? '삭제 중...' : '삭제'}
+                          </button>
+                        </div>
+                        )
+                      : null}
+                  </div>
+                  )
+                : null}
             </div>
           </header>
 
@@ -260,6 +311,9 @@ export function ThreadPost ({
               답글 {commentCount}개 · 좋아요 {count}개
             </p>
           </footer>
+          {postError.length > 0
+            ? <p className='mt-2 text-[13px] text-red-400'>{postError}</p>
+            : null}
 
           {showComments && (
             <div className='mt-4 border-t border-border-subtle pt-4'>

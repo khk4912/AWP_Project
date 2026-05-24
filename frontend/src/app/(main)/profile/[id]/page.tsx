@@ -184,6 +184,9 @@ export default function ProfilePage () {
                   likedByMe={likedByIncludes(post, myId)}
                   replyCount={(post.commentCount ?? 0).toString()}
                   time={relativeTime(post.createdAt)}
+                  onDeleted={(deletedPostId) => {
+                    setPosts((currentPosts) => currentPosts.filter((currentPost) => currentPost._id !== deletedPostId))
+                  }}
                 />
               ))
             )}

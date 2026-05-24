@@ -172,6 +172,9 @@ function FeedView ({ userId, token }: { userId: string; token: string }) {
                         likedByMe={likedByIncludes(post, userId)}
                         replyCount={(post.commentCount ?? 0).toString()}
                         time={relativeTime(post.createdAt)}
+                        onDeleted={(deletedPostId) => {
+                          setPosts((currentPosts) => currentPosts.filter((currentPost) => currentPost._id !== deletedPostId))
+                        }}
                       />
                     ))
                   )}

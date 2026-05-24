@@ -164,6 +164,13 @@ export function createPost (token: string, content: string): Promise<IdResponse>
   })
 }
 
+export function deletePost (token: string, postId: string): Promise<IdResponse> {
+  return apiFetch<IdResponse>(`/posts/${postId}`, {
+    method: 'DELETE',
+    token,
+  })
+}
+
 export function likePost (token: string, postId: string): Promise<IdResponse> {
   return apiFetch<IdResponse>(`/posts/${postId}/like`, {
     method: 'POST',
