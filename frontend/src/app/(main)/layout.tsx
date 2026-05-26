@@ -100,7 +100,7 @@ function LogoutButton () {
     <button
       type='button'
       onClick={handleLogout}
-      className='inline-flex w-full items-center gap-2 rounded-full border border-border-subtle px-4 py-2 text-sm font-semibold text-text-primary transition-colors hover:bg-white/10'
+      className='inline-flex w-fit items-center gap-2 rounded-full border border-border-subtle px-4 py-2 text-sm font-semibold text-text-primary transition-colors hover:bg-white/10'
     >
       <LogOut className='size-4 shrink-0' strokeWidth={2} aria-hidden='true' />
       로그아웃
