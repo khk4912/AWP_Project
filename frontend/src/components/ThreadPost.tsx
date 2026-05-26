@@ -447,9 +447,12 @@ export function ThreadPost ({
                                 )}
                             <div className='min-w-0 flex-1'>
                               <div className='flex items-center justify-between gap-2'>
-                                <span className='truncate text-[13px] font-semibold text-text-primary'>
+                                <Link
+                                  href={`/profile/${comment.author._id}`}
+                                  className='truncate text-[13px] font-semibold text-text-primary hover:underline'
+                                >
                                   {comment.author.username}
-                                </span>
+                                </Link>
                                 {isMine && (
                                   <button
                                     type='button'
