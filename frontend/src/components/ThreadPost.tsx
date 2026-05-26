@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import type { MouseEvent } from 'react'
 import type { ReactNode } from 'react'
 import Link from 'next/link'
@@ -11,6 +11,7 @@ import {
   MessageCircle,
   MoreHorizontal,
   Pencil,
+  Send,
   Trash2
 } from 'lucide-react'
 import { createComment, deleteComment, deletePost, getComments, likePost, unlikePost, updatePost } from '@/lib/api'
@@ -87,6 +88,7 @@ export function ThreadPost ({
   const [comments, setComments] = useState<Comment[]>([])
   const [commentCount, setCommentCount] = useState(replyCount)
   const [commentText, setCommentText] = useState('')
+  const commentTextareaRef = useRef<HTMLTextAreaElement | null>(null)
   const [commentsFetched, setCommentsFetched] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [commentError, setCommentError] = useState('')
@@ -132,6 +134,14 @@ export function ThreadPost ({
   function handleToggleComments () {
     if (!showComments && !commentsFetched) fetchComments().catch(() => {})
     setShowComments(!showComments)
+  }
+
+  function resizeCommentTextarea () {
+    const textarea = commentTextareaRef.current
+    if (textarea == null) return
+
+    textarea.style.height = 'auto'
+    textarea.style.height = `${textarea.scrollHeight}px`
   }
 
   function handleArticleClick (event: MouseEvent<HTMLElement>) {
@@ -235,6 +245,10 @@ export function ThreadPost ({
     setPostContent(content)
     setDraftContent(content)
   }, [content])
+
+  useEffect(() => {
+    resizeCommentTextarea()
+  }, [commentText, showComments])
 
   return (
     <article
@@ -399,13 +413,17 @@ export function ThreadPost ({
 
           {showComments && (
             <div className='mt-4 border-t border-border-subtle pt-4'>
-              <div className='flex gap-2'>
+              <div className='flex items-start gap-2'>
                 <textarea
-                  className='min-w-0 flex-1 resize-none rounded-xl border border-border-subtle bg-bg-soft px-3 py-2 text-[14px] text-text-primary placeholder:text-text-muted outline-none transition-colors focus:border-primary'
+                  ref={commentTextareaRef}
+                  className='min-w-0 flex-1 resize-none overflow-hidden rounded-xl border border-border-subtle bg-bg-soft px-3 py-2 text-[14px] text-text-primary placeholder:text-text-muted outline-none transition-colors focus:border-primary'
                   placeholder='댓글을 입력하세요...'
                   rows={1}
                   value={commentText}
-                  onChange={(event) => setCommentText(event.target.value)}
+                  onChange={(event) => {
+                    setCommentText(event.target.value)
+                    resizeCommentTextarea()
+                  }}
                 />
                 <button
                   type='button'
@@ -413,9 +431,10 @@ export function ThreadPost ({
                     handleSubmitComment().catch(() => {})
                   }}
                   disabled={submitting || commentText.trim().length === 0}
-                  className='shrink-0 rounded-xl bg-primary px-4 text-[13px] font-semibold text-white transition-opacity hover:opacity-80 disabled:opacity-40'
+                  className='inline-flex size-9 shrink-0 items-center justify-center rounded-full bg-primary text-white transition-opacity hover:opacity-80 disabled:opacity-40'
+                  aria-label='댓글 게시'
                 >
-                  게시
+                  <Send className='size-4' strokeWidth={2} aria-hidden='true' />
                 </button>
               </div>
               {commentError.length > 0
