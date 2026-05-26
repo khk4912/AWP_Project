@@ -2,18 +2,23 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
+
+import { useEffect, useState } from 'react'
 import {
   CircleUserRound,
   Home,
+  LogIn,
   LogOut,
   Search,
   type LucideIcon,
 } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import { RightRail } from '@/components/RightRail'
-import { clearAuthToken } from '@/lib/auth'
+import { clearAuthToken, getAuthToken } from '@/lib/auth'
 
 import zIconSrc from '@assets/z-icon.png'
+
+const AUTH_CHANGED_EVENT = 'auth-token-changed'
 
 type LayoutItemProps = {
   title: string
@@ -95,14 +100,48 @@ function LogoutButton () {
     <button
       type='button'
       onClick={handleLogout}
-      className='group flex w-full items-center gap-3 rounded-full py-1.5 text-[16px] text-zinc-400 transition-colors hover:text-white'
+      className='inline-flex w-full items-center gap-2 rounded-full border border-border-subtle px-4 py-2 text-sm font-semibold text-text-primary transition-colors hover:bg-white/10'
     >
-      <span className='inline-flex size-11 items-center justify-center rounded-full transition-colors group-hover:bg-white/10'>
-        <LogOut className='size-[23px] shrink-0' strokeWidth={2} />
-      </span>
-      <h3 className='leading-none'>로그아웃</h3>
+      <LogOut className='size-4 shrink-0' strokeWidth={2} aria-hidden='true' />
+      로그아웃
     </button>
   )
+}
+
+function LoginButton () {
+  return (
+    <Link
+      href='/login'
+      className='inline-flex items-center gap-2 rounded-full border border-border-subtle px-4 py-2 text-sm font-semibold text-text-primary transition-colors hover:bg-white/10'
+    >
+      <LogIn className='size-4 shrink-0' strokeWidth={2} aria-hidden='true' />
+      로그인
+    </Link>
+  )
+}
+
+function SidebarAuthButton () {
+  const [ready, setReady] = useState(false)
+  const [loggedIn, setLoggedIn] = useState(false)
+
+  useEffect(() => {
+    function syncAuthState () {
+      setLoggedIn(getAuthToken() != null)
+      setReady(true)
+    }
+
+    syncAuthState()
+    window.addEventListener(AUTH_CHANGED_EVENT, syncAuthState)
+    window.addEventListener('storage', syncAuthState)
+
+    return () => {
+      window.removeEventListener(AUTH_CHANGED_EVENT, syncAuthState)
+      window.removeEventListener('storage', syncAuthState)
+    }
+  }, [])
+
+  if (!ready) return null
+  return loggedIn ? <LogoutButton /> : <LoginButton />
 }
 
 function DesktopSidebar () {
@@ -116,7 +155,7 @@ function DesktopSidebar () {
           ))}
         </div>
         <div className='mt-auto'>
-          <LogoutButton />
+          <SidebarAuthButton />
         </div>
       </nav>
     </aside>

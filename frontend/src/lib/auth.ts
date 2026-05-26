@@ -1,4 +1,5 @@
 const TOKEN_KEY = 'token'
+const AUTH_CHANGED_EVENT = 'auth-token-changed'
 
 function isRecord (value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null
@@ -22,10 +23,12 @@ export function getAuthToken (): string | null {
 
 export function setAuthToken (token: string): void {
   window.localStorage.setItem(TOKEN_KEY, token)
+  window.dispatchEvent(new Event(AUTH_CHANGED_EVENT))
 }
 
 export function clearAuthToken (): void {
   window.localStorage.removeItem(TOKEN_KEY)
+  window.dispatchEvent(new Event(AUTH_CHANGED_EVENT))
 }
 
 export function getUserIdFromToken (token: string | null = getAuthToken()): string {
