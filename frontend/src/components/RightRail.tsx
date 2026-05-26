@@ -159,8 +159,7 @@ export function RightRail () {
         </section>
 
         <footer className='space-y-4 text-[11px] leading-5 text-text-muted'>
-          <p>소개 · 도움말 · 개인정보 · 약관</p>
-          <p>© 2026 Z</p>
+          <p>© 2026 G</p>
         </footer>
       </div>
     </aside>

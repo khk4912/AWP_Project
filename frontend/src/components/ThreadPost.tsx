@@ -239,7 +239,7 @@ export function ThreadPost ({
   return (
     <article
       onClick={handleArticleClick}
-      className={`relative border-b border-border-subtle px-4 py-5 sm:px-0 ${
+      className={`relative border-b border-border-subtle px-4 py-5 sm:px-4 ${
         enableDetailLink ? 'cursor-pointer transition-colors hover:bg-white/[0.03]' : ''
       }`}
     >

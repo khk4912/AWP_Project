@@ -109,7 +109,7 @@ export default function SearchPage () {
           <UserAvatar user={user} />
           <div className='min-w-0'>
             <p className='truncate text-[15px] font-semibold text-text-primary'>{user.username}</p>
-            <p className='truncate text-[13px] text-text-muted'>{user.bio || user.email || 'Z 사용자'}</p>
+            <p className='truncate text-[13px] text-text-muted'>{user.bio || user.email || 'G 사용자'}</p>
           </div>
         </Link>
         <button

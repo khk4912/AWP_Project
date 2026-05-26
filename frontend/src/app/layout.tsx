@@ -3,8 +3,8 @@ import type { Metadata } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Z',
-  description: 'Z social network',
+  title: 'G',
+  description: 'G social network',
 }
 
 export default function RootLayout ({

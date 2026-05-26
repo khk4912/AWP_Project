@@ -29,7 +29,7 @@ export function likedByIncludes (post: Post, userId: string): boolean {
 }
 
 export function getInitial (name: string): string {
-  return name.trim().charAt(0).toUpperCase() || 'Z'
+  return name.trim().charAt(0).toUpperCase() || 'G'
 }
 
 export function isSameUser (user: UserSummary, userId: string): boolean {
