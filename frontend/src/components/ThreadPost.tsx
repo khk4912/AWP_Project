@@ -274,11 +274,11 @@ export function ThreadPost ({
               )}
         </div>
 
-        <div className='min-w-0 flex-1'>
-          <header className='flex items-center justify-between gap-4'>
+        <div className='min-w-0 flex-1 flex flex-col gap-1'>
+          <header className='flex items-center justify-between gap-8'>
             <div className='min-w-0'>
               <div className='flex items-center gap-1.5'>
-                <Link href={`/profile/${authorId}`} className='truncate text-[15px] font-semibold leading-5 text-text-primary hover:underline'>
+                <Link href={`/profile/${authorId}`} className='truncate font-semibold text-[15px] leading-5 text-text-primary hover:underline'>
                   {author}
                 </Link>
                 {verified ? <VerifiedBadge /> : null}
@@ -331,7 +331,7 @@ export function ThreadPost ({
 
           {editing
             ? (
-              <div className='mt-2'>
+              <div className='mt-4'>
                 <textarea
                   className='min-h-28 w-full resize-none rounded-xl border border-border-subtle bg-bg-soft px-3 py-2 text-[15px] leading-6 text-text-primary outline-none transition-colors focus:border-primary'
                   value={draftContent}
