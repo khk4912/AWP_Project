@@ -7,6 +7,7 @@ import tseslint from 'typescript-eslint'
 const ignores = [
   '.next/**',
   'out/**',
+  'dist/**',
   'build/**',
   'next-env.d.ts',
 ]
