@@ -10,6 +10,7 @@ import type {
 } from './types'
 
 const API_BASE_PATH = '/api'
+const SERVER_API_BASE_URL = process.env.BACKEND_URL ?? 'http://localhost:3000'
 
 type ApiFetchOptions = Omit<RequestInit, 'body' | 'headers'> & {
   body?: unknown
@@ -84,7 +85,11 @@ export async function apiFetch<T> (path: string, options: ApiFetchOptions = {}):
     headers.set('Authorization', `Bearer ${token}`)
   }
 
-  const response = await fetch(`${API_BASE_PATH}${path}`, {
+  const apiUrl = typeof window === 'undefined'
+    ? `${SERVER_API_BASE_URL}${path}`
+    : `${API_BASE_PATH}${path}`
+
+  const response = await fetch(apiUrl, {
     ...requestOptions,
     headers,
     body: body === undefined ? undefined : JSON.stringify(body),

@@ -8,6 +8,7 @@ import UserAvatar from './UserAvatar'
 
 function getPageTitle (pathname: string): string {
   if (pathname.startsWith('/write')) return '글쓰기'
+  if (pathname.startsWith('/post')) return '게시글'
   if (pathname.startsWith('/search')) return '검색'
   if (pathname.startsWith('/notifications')) return '알림'
   if (pathname.startsWith('/profile')) return '프로필'

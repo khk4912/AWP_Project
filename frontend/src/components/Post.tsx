@@ -1,6 +1,7 @@
 'use client'
 
 import { HeartIcon, MessageCircleIcon, MoreHorizontalIcon, ShareIcon } from 'lucide-react'
+import Link from 'next/link'
 
 import UserAvatar from './UserAvatar'
 import { relativeTime } from '@/lib/format'
@@ -13,6 +14,7 @@ type PostProps = {
   onComment?: (post: PostModel) => void
   onShare?: (post: PostModel) => void
   onMore?: (post: PostModel) => void
+  href?: string
 }
 
 function formatCount (count: number): string {
@@ -65,11 +67,25 @@ export default function Post ({
   onComment,
   onShare,
   onMore,
+  href,
 }: PostProps) {
   const isLiked = isLikedByCurrentUser(post, currentUserId)
   const likeCount = post.likedBy.length
   const commentCount = post.commentCount ?? 0
   const authorName = post.author.username
+  const postContent = href != null
+    ? (
+      <Link href={href} className='mt-1 block rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'>
+        <p className='whitespace-pre-wrap leading-6 text-gray-950'>
+          {post.content}
+        </p>
+      </Link>
+      )
+    : (
+      <p className='mt-1 whitespace-pre-wrap leading-6 text-gray-950'>
+        {post.content}
+      </p>
+      )
 
   return (
     <article className='flex gap-3 border-b border-gray-100 px-4 py-5 transition-colors hover:bg-gray-50/50'>
@@ -94,9 +110,7 @@ export default function Post ({
           </button>
         </header>
 
-        <p className='mt-1 whitespace-pre-wrap leading-6 text-gray-950'>
-          {post.content}
-        </p>
+        {postContent}
 
         <footer className='mt-4 flex max-w-md items-center gap-4'>
           <ActionButton
