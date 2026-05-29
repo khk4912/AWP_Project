@@ -4,7 +4,17 @@ import { useLayoutEffect, useRef, useState } from 'react'
 
 import UserAvatar from '@/components/UserAvatar'
 
-export default function PostComposer () {
+type PostComposerProps = {
+  variant?: 'feed' | 'page' | 'modal'
+}
+
+const variantClassName = {
+  feed: 'hidden md:flex border-b border-gray-200',
+  page: 'flex border-b border-gray-200',
+  modal: 'flex',
+}
+
+export default function PostComposer ({ variant = 'feed' }: PostComposerProps) {
   const [content, setContent] = useState('')
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
@@ -17,7 +27,7 @@ export default function PostComposer () {
   }, [content])
 
   return (
-    <div className='border-b border-gray-200 px-4 py-3 hidden md:flex gap-4 items-start'>
+    <div className={`${variantClassName[variant]} gap-4 px-4 py-3 items-start`}>
       <UserAvatar name='나' seed='me' size={40} />
       <textarea
         ref={textareaRef}

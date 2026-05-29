@@ -9,14 +9,25 @@ type NavbarMenuProps = {
   href: string
   icon: React.ReactNode
   label: string
+  documentNavigation?: boolean
 }
-function NavbarMenu ({ href, icon, label }: NavbarMenuProps) {
+function NavbarMenu ({ href, icon, label, documentNavigation = false }: NavbarMenuProps) {
   const pathname = usePathname()
   const isActive = pathname === href || pathname.startsWith(`${href}/`)
+  const className = `text-lg flex items-center gap-4 py-2 ${isActive ? 'text-blue-500 font-bold' : 'text-gray-700 hover:text-gray-900'}`
+
+  if (documentNavigation) {
+    return (
+      <a href={href} className={className} aria-label={label}>
+        {icon}
+      </a>
+    )
+  }
+
   return (
     <Link
       href={href}
-      className={`text-lg flex items-center gap-4 py-2 ${isActive ? 'text-blue-500 font-bold' : 'text-gray-700 hover:text-gray-900'}`}
+      className={className}
       aria-label={label}
     >
 
@@ -34,7 +45,7 @@ export default function MobileBottomNav () {
     >
       <NavbarMenu href='/home' icon={<HomeIcon className='h-6 w-6' />} label='홈' />
       <NavbarMenu href='/search' icon={<SearchIcon className='h-6 w-6' />} label='검색' />
-      <NavbarMenu href='/write' icon={<PencilIcon className='h-6 w-6' />} label='글쓰기' />
+      <NavbarMenu href='/write' icon={<PencilIcon className='h-6 w-6' />} label='글쓰기' documentNavigation />
       <NavbarMenu href='/notifications' icon={<BellIcon className='h-6 w-6' />} label='알림' />
       <NavbarMenu href='/profile' icon={<UserIcon className='h-6 w-6' />} label='프로필' />
     </nav>
