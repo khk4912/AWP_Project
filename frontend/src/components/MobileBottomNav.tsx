@@ -12,9 +12,7 @@ type NavbarMenuProps = {
 }
 function NavbarMenu ({ href, icon, label }: NavbarMenuProps) {
   const pathname = usePathname()
-  const isActive = pathname === href
-
-  console.log('pathname:', pathname, 'href:', href, 'isActive:', isActive)
+  const isActive = pathname === href || pathname.startsWith(`${href}/`)
   return (
     <Link
       href={href}
@@ -34,11 +32,11 @@ export default function MobileBottomNav () {
                     px-2 py-4
                     border-t border-gray-200'
     >
-      <NavbarMenu href='/' icon={<HomeIcon className='h-6 w-6' />} label='홈' />
+      <NavbarMenu href='/home' icon={<HomeIcon className='h-6 w-6' />} label='홈' />
       <NavbarMenu href='/search' icon={<SearchIcon className='h-6 w-6' />} label='검색' />
       <NavbarMenu href='/write' icon={<PencilIcon className='h-6 w-6' />} label='글쓰기' />
       <NavbarMenu href='/notifications' icon={<BellIcon className='h-6 w-6' />} label='알림' />
-      <NavbarMenu href='/profiles' icon={<UserIcon className='h-6 w-6' />} label='프로필' />
+      <NavbarMenu href='/profile' icon={<UserIcon className='h-6 w-6' />} label='프로필' />
     </nav>
   )
 }
