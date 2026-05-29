@@ -40,9 +40,13 @@ export default function MobileTopNav () {
     <nav className='fixed top-0 left-0 right-0 z-10 flex h-16 w-full items-center justify-between border-b border-gray-200 bg-white px-4 md:hidden'>
       <UserAvatar name='나' seed='me' size={32} />
       <GLogo size={32} color='#333' />
-      <a href='/write' aria-label='글쓰기'>
+      <button
+        type='button'
+        aria-label='글쓰기'
+        onClick={() => window.location.assign('/write')}
+      >
         <PencilIcon className='h-5 w-5' />
-      </a>
+      </button>
     </nav>
   )
 }

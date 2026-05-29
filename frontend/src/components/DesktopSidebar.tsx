@@ -44,7 +44,7 @@ function AccountMenu ({ name, username }: AccountMenuProps) {
 
 export default function DesktopSidebar () {
   return (
-    <aside className='hidden md:flex flex-col gap-5 px-8 py-6 fixed border-r border-gray-200 h-full w-56'>
+    <aside className='sticky top-0 hidden h-screen w-56 shrink-0 flex-col gap-5 border-r border-gray-200 px-8 py-6 md:flex'>
       <GLogo size={48} color='#333' />
       <div />
       <NavbarMenu href='/home' icon={<HomeIcon className='h-6 w-6' />} label='홈' />
