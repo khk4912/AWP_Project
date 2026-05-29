@@ -1,8 +1,13 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { BellIcon, HomeIcon, SearchIcon, UserIcon, PencilIcon } from 'lucide-react'
+
+import { getUser } from '@/lib/api'
+import { getAuthToken, getUserIdFromToken } from '@/lib/auth'
+import type { UserProfile } from '@/lib/types'
 
 import GLogo from './GLogo'
 import UserAvatar from './UserAvatar'
@@ -48,17 +53,38 @@ function AccountMenu ({ name, username }: AccountMenuProps) {
 }
 
 export default function DesktopSidebar () {
+  const [currentUser, setCurrentUser] = useState<UserProfile | null>(null)
+
+  useEffect(() => {
+    async function loadCurrentUser () {
+      const token = getAuthToken()
+      const userId = getUserIdFromToken(token)
+      if (userId.length === 0) return
+
+      try {
+        setCurrentUser(await getUser(userId))
+      } catch {
+        setCurrentUser(null)
+      }
+    }
+
+    loadCurrentUser().catch(() => setCurrentUser(null))
+  }, [])
+
   return (
     <aside className='sticky top-0 hidden h-screen w-56 shrink-0 flex-col gap-5 border-r border-gray-200 px-8 py-6 md:flex'>
       <GLogo size={48} color='#333' />
-      <div />
+      <div id='spacer' />
       <NavbarMenu href='/home' icon={<HomeIcon className='h-6 w-6' />} label='홈' />
       <NavbarMenu href='/search' icon={<SearchIcon className='h-6 w-6' />} label='검색' />
       <NavbarMenu href='/notifications' icon={<BellIcon className='h-6 w-6' />} label='알림' />
       <NavbarMenu href='/write' icon={<PencilIcon className='h-6 w-6' />} label='글쓰기' />
       <NavbarMenu href='/profile' icon={<UserIcon className='h-6 w-6' />} label='프로필' />
 
-      <AccountMenu name='John Doe' username='john' />
+      <AccountMenu
+        name={currentUser?.username ?? '나'}
+        username={currentUser?.email ?? 'you'}
+      />
     </aside>
   )
 }
