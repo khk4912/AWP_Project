@@ -1,5 +1,6 @@
 const TOKEN_KEY = 'token'
 const AUTH_CHANGED_EVENT = 'auth-token-changed'
+const TOKEN_MAX_AGE_SECONDS = 60 * 60 * 24 * 7
 
 function isRecord (value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null
@@ -18,16 +19,29 @@ function decodeJwtPayload (token: string): unknown {
 
 export function getAuthToken (): string | null {
   if (typeof window === 'undefined') return null
-  return window.localStorage.getItem(TOKEN_KEY)
+
+  const tokenCookie = document.cookie
+    .split('; ')
+    .find((cookie) => cookie.startsWith(`${TOKEN_KEY}=`))
+
+  if (tokenCookie == null) return null
+
+  return decodeURIComponent(tokenCookie.slice(TOKEN_KEY.length + 1))
 }
 
 export function setAuthToken (token: string): void {
-  window.localStorage.setItem(TOKEN_KEY, token)
+  const secure = window.location.protocol === 'https:' ? '; Secure' : ''
+  document.cookie = [
+    `${TOKEN_KEY}=${encodeURIComponent(token)}`,
+    'path=/',
+    `max-age=${TOKEN_MAX_AGE_SECONDS}`,
+    'SameSite=Lax',
+  ].join('; ') + secure
   window.dispatchEvent(new Event(AUTH_CHANGED_EVENT))
 }
 
 export function clearAuthToken (): void {
-  window.localStorage.removeItem(TOKEN_KEY)
+  document.cookie = `${TOKEN_KEY}=; path=/; max-age=0; SameSite=Lax`
   window.dispatchEvent(new Event(AUTH_CHANGED_EVENT))
 }
 
