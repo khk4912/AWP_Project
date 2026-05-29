@@ -28,14 +28,14 @@ export default function PostComposer ({ variant = 'feed' }: PostComposerProps) {
 
   return (
     <div className={`${variantClassName[variant]} gap-4 px-4 py-3 items-start`}>
-      <UserAvatar name='나' seed='me' size={40} />
+      <UserAvatar name='나' seed='me' size={44} />
       <textarea
         ref={textareaRef}
         value={content}
         onChange={(event) => setContent(event.target.value)}
-        className='max-h-48 min-h-10 flex-1 resize-none overflow-hidden rounded p-2 leading-6 focus:outline-none focus:ring-1 focus:ring-blue-500'
+        className='max-h-48 min-h-10 flex-1 resize-none overflow-hidden rounded p-2 leading-6 focus:outline-none focus:ring-1 focus:ring-blue-500 font-[16px]'
         placeholder='무슨 생각을 하고 계신가요?'
-        rows={1}
+        rows={5}
       />
       <button className=' px-4 py-2 bg-blue-500 text-white rounded-2xl hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed' disabled={content.trim().length === 0}>
         게시

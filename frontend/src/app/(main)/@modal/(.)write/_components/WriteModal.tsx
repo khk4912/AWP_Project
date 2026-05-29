@@ -24,7 +24,9 @@ export default function WriteModal () {
 
   return (
     <div
-      className='hidden md:fixed md:inset-0 md:z-50 md:flex md:items-start md:justify-center md:bg-black/40 md:px-6 md:pt-20'
+      className='hidden md:fixed md:inset-0 md:z-50 md:flex
+                 md:items-start md:justify-center md:bg-black/40
+                 md:px-6 md:pt-20 backdrop-blur-[2px] transition-all duration-300'
       role='presentation'
       onClick={closeModal}
     >

@@ -16,7 +16,12 @@ function NavbarMenu ({ href, icon, label }: NavbarMenuProps) {
   const pathname = usePathname()
   const isActive = pathname === href || pathname.startsWith(`${href}/`)
   return (
-    <Link href={href} className={`text-lg flex items-center gap-4 py-2 ${isActive ? 'text-blue-500 font-bold' : 'text-gray-700 hover:text-gray-900'}`}>
+    <Link
+      href={href}
+      className={`text-lg flex items-center gap-4 py-2 ml-[-12]
+                 ${isActive ? 'text-blue-500 font-bold' : 'text-gray-700 hover:text-gray-900'}
+                  rounded-full transition-colors hover:bg-gray-100 px-4`}
+    >
       {icon}
       {label}
     </Link>
