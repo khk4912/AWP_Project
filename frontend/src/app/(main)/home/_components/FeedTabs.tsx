@@ -16,7 +16,7 @@ export default function FeedTabs ({ activeTab }: FeedTabsProps) {
     <nav className='sticky top-16 z-10 grid h-14 grid-cols-2 border-b border-gray-200 bg-white/90 backdrop-blur md:top-0'>
       <span
         aria-hidden='true'
-        className={`absolute bottom-0 h-0.5 w-8 -translate-x-1/2 rounded-full bg-gray-950 transition-[left] duration-300 ease-out motion-reduce:transition-none ${activeTab === 'following' ? 'left-3/4' : 'left-1/4'}`}
+        className={`absolute bottom-0 h-0.5 w-8 -translate-x-1/2 rounded-full bg-gray-950 transition-[left] duration-300 ease-out motion-reduce:transition-none ${activeTab === 'following' ? 'left-3/4' : 'left-1/4'} px-10 z-10`}
       />
       {tabs.map((tab) => {
         const isActive = activeTab === tab.value
