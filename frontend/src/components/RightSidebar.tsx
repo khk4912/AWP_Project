@@ -1,10 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-
-import { followUser, getUsers } from '@/lib/api'
-import { getAuthToken, getUserIdFromToken } from '@/lib/auth'
-import type { UserSummary } from '@/lib/types'
+import { mockUsers } from '@/lib/mock'
 
 import UserAvatar from './UserAvatar'
 
@@ -32,31 +28,6 @@ const trends = [
 ]
 
 export default function RightSidebar () {
-  const [users, setUsers] = useState<UserSummary[]>([])
-  const [followedUserIds, setFollowedUserIds] = useState<Set<string>>(new Set())
-  const token = getAuthToken()
-  const currentUserId = getUserIdFromToken(token)
-
-  useEffect(() => {
-    async function loadUsers () {
-      try {
-        const response = await getUsers()
-        setUsers(response.filter((user) => user._id !== currentUserId).slice(0, 3))
-      } catch {
-        setUsers([])
-      }
-    }
-
-    loadUsers().catch(() => setUsers([]))
-  }, [currentUserId])
-
-  async function handleFollow (userId: string) {
-    if (token == null) return
-
-    await followUser(token, userId)
-    setFollowedUserIds((current) => new Set([...current, userId]))
-  }
-
   return (
     <aside className='sticky top-0 hidden h-screen w-80 shrink-0 overflow-y-auto border-l border-gray-100 bg-white px-6 py-4 xl:block'>
       <section className='mt-5 rounded-lg bg-gray-100 px-4 py-4'>
@@ -75,35 +46,21 @@ export default function RightSidebar () {
       <section className='mt-5 rounded-lg bg-gray-100 px-4 py-4'>
         <h2 className='text-xl font-bold text-gray-950'>추천 사용자</h2>
         <div className='mt-4 divide-y divide-gray-200'>
-          {users.length > 0
-            ? users.map((user) => {
-              const isFollowed = followedUserIds.has(user._id)
-
-              return (
-                <article key={user._id} className='flex items-center gap-3 py-3 first:pt-0 last:pb-0'>
-                  <UserAvatar name={user.username} seed={user._id} size={40} />
-                  <div className='min-w-0 flex-1'>
-                    <h3 className='truncate text-sm font-bold text-gray-950'>{user.username}</h3>
-                    <p className='truncate text-sm text-gray-500'>{user.email ?? user.bio ?? ''}</p>
-                  </div>
-                  <button
-                    type='button'
-                    className='shrink-0 rounded-full bg-gray-950 px-4 py-2 text-sm font-bold text-white hover:bg-gray-800 disabled:bg-gray-400'
-                    disabled={token == null || isFollowed}
-                    onClick={() => {
-                      handleFollow(user._id).catch(() => undefined)
-                    }}
-                  >
-                    {isFollowed ? '팔로잉' : '팔로우'}
-                  </button>
-                </article>
-              )
-            })
-            : (
-              <div className='py-8 text-center text-sm text-gray-500'>
-                추천 사용자가 없습니다.
+          {mockUsers.map((user, index) => (
+            <article key={user._id} className='flex items-center gap-3 py-3 first:pt-0 last:pb-0'>
+              <UserAvatar name={user.username} seed={user._id} size={40} />
+              <div className='min-w-0 flex-1'>
+                <h3 className='truncate text-sm font-bold text-gray-950'>{user.username}</h3>
+                <p className='truncate text-sm text-gray-500'>{user.email ?? user.bio ?? ''}</p>
               </div>
-              )}
+              <button
+                type='button'
+                className='shrink-0 rounded-full bg-gray-950 px-4 py-2 text-sm font-bold text-white hover:bg-gray-800'
+              >
+                {index === 0 ? '팔로잉' : '팔로우'}
+              </button>
+            </article>
+          ))}
         </div>
       </section>
 

@@ -1,63 +1,9 @@
-'use client'
-
-import { useEffect, useState } from 'react'
-
 import UserAvatar from '@/components/UserAvatar'
-import { getFollowRelations, getUser } from '@/lib/api'
-import { getAuthToken, getUserIdFromToken } from '@/lib/auth'
-import type { FollowRelations, UserProfile } from '@/lib/types'
+import { mockCurrentUser, mockFollowRelations } from '@/lib/mock'
 
 export default function ProfileClient () {
-  const [profile, setProfile] = useState<UserProfile | null>(null)
-  const [relations, setRelations] = useState<FollowRelations | null>(null)
-  const [errorMessage, setErrorMessage] = useState('')
-  const token = getAuthToken()
-  const userId = getUserIdFromToken(token)
-
-  useEffect(() => {
-    async function loadProfile () {
-      if (userId.length === 0) return
-
-      try {
-        const [profileResponse, relationsResponse] = await Promise.all([
-          getUser(userId),
-          getFollowRelations(userId),
-        ])
-        setProfile(profileResponse)
-        setRelations(relationsResponse)
-      } catch (error) {
-        setErrorMessage(error instanceof Error ? error.message : '프로필을 불러오지 못했습니다.')
-      }
-    }
-
-    loadProfile().catch((error: unknown) => {
-      setErrorMessage(error instanceof Error ? error.message : '프로필을 불러오지 못했습니다.')
-    })
-  }, [userId])
-
-  if (token == null || userId.length === 0) {
-    return (
-      <div className='flex min-h-[240px] items-center justify-center px-6 text-center text-gray-500'>
-        로그인 후 프로필을 확인할 수 있습니다.
-      </div>
-    )
-  }
-
-  if (errorMessage.length > 0) {
-    return (
-      <div className='flex min-h-[240px] items-center justify-center px-6 text-center text-gray-500'>
-        {errorMessage}
-      </div>
-    )
-  }
-
-  if (profile == null) {
-    return (
-      <div className='flex min-h-[240px] items-center justify-center px-6 text-center text-gray-500'>
-        프로필을 불러오는 중입니다.
-      </div>
-    )
-  }
+  const profile = mockCurrentUser
+  const relations = mockFollowRelations
 
   return (
     <div className='border-b border-gray-200 px-4 py-6'>

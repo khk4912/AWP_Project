@@ -1,37 +1,28 @@
-import type { Post, UserSummary } from './types'
+export function getInitial (value: string): string {
+  const trimmed = value.trim()
+  if (trimmed.length === 0) return '?'
 
-export function relativeTime (dateStr: string): string {
-  const timestamp = new Date(dateStr).getTime()
-  if (Number.isNaN(timestamp)) return ''
+  return [...trimmed][0].toUpperCase()
+}
 
-  const diff = Math.max(0, Date.now() - timestamp)
-  const minutes = Math.floor(diff / 60000)
-  if (minutes < 1) return '방금'
+export function relativeTime (value: string): string {
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return ''
+
+  const seconds = Math.max(0, Math.floor((Date.now() - date.getTime()) / 1000))
+  if (seconds < 60) return '방금'
+
+  const minutes = Math.floor(seconds / 60)
   if (minutes < 60) return `${minutes}분`
 
   const hours = Math.floor(minutes / 60)
   if (hours < 24) return `${hours}시간`
 
   const days = Math.floor(hours / 24)
-  if (days < 30) return `${days}일`
+  if (days < 7) return `${days}일`
 
-  return new Intl.DateTimeFormat('ko-KR', {
+  return date.toLocaleDateString('ko-KR', {
     month: 'short',
-    day: 'numeric'
-  }).format(timestamp)
-}
-
-export function likedByIncludes (post: Post, userId: string): boolean {
-  return post.likedBy.some((likedBy) => {
-    if (typeof likedBy === 'string') return likedBy === userId
-    return likedBy._id === userId
+    day: 'numeric',
   })
-}
-
-export function getInitial (name: string): string {
-  return name.trim().charAt(0).toUpperCase() || 'G'
-}
-
-export function isSameUser (user: UserSummary, userId: string): boolean {
-  return user._id === userId
 }
