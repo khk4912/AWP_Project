@@ -16,5 +16,5 @@ body {
 html,
 body {
   min-height: 100%;
-  overscroll-behavior: none;
+  overscroll-behavior-y: none;
 }
