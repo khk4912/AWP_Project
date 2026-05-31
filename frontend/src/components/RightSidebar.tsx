@@ -48,7 +48,7 @@ export default function RightSidebar () {
         <div className='mt-4 divide-y divide-gray-200'>
           {mockUsers.map((user, index) => (
             <article key={user._id} className='flex items-center gap-3 py-3 first:pt-0 last:pb-0'>
-              <UserAvatar name={user.username} seed={user._id} size={40} />
+              <UserAvatar name={user.username} userId={user._id} seed={user._id} size={40} />
               <div className='min-w-0 flex-1'>
                 <h3 className='truncate text-sm font-bold text-gray-950'>{user.username}</h3>
                 <p className='truncate text-sm text-gray-500'>{user.email ?? user.bio ?? ''}</p>
