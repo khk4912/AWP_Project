@@ -23,7 +23,7 @@ export default function TopNav ({ currentUser }: { currentUser: UserProfile | nu
 
   if (isHome) {
     return (
-      <nav className='fixed left-0 right-0 top-0 z-10 flex h-16 w-full items-center justify-between border-b border-gray-200 bg-white px-4 md:hidden'>
+      <nav className='fixed left-0 right-0 top-0 z-30 flex h-16 w-full items-center justify-between border-b border-gray-200 bg-white px-4 md:hidden'>
         {currentUser != null
           ? <UserAvatar name={currentUser.username} userId={currentUser._id} seed={currentUser._id} size={32} />
           : <span className='h-8 w-8' />}
@@ -41,7 +41,7 @@ export default function TopNav ({ currentUser }: { currentUser: UserProfile | nu
   }
 
   return (
-    <nav className='fixed left-0 right-0 top-0 z-10 flex h-16 w-full items-center justify-between border-b border-gray-200 bg-white px-4 md:sticky md:left-auto md:right-auto md:h-14'>
+    <nav className='fixed left-0 right-0 top-0 z-30 flex h-16 w-full items-center justify-between border-b border-gray-200 bg-white px-4 md:sticky md:left-auto md:right-auto md:h-14'>
       <button
         type='button'
         aria-label='뒤로가기'
