@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { BellIcon, HomeIcon, SearchIcon, UserIcon, PencilIcon } from 'lucide-react'
 
-import { mockCurrentUser } from '@/lib/mock'
+import type { UserProfile } from '@/lib/types'
 
 import GLogo from './GLogo'
 import UserAvatar from './UserAvatar'
@@ -50,7 +50,7 @@ function AccountMenu ({ name, username, userId }: AccountMenuProps) {
   )
 }
 
-export default function DesktopSidebar () {
+export default function DesktopSidebar ({ currentUser }: { currentUser: UserProfile | null }) {
   return (
     <aside className='sticky top-0 hidden h-screen w-56 shrink-0 flex-col gap-5 border-r border-gray-200 px-8 py-6 md:flex'>
       <GLogo size={48} color='#333' />
@@ -61,11 +61,15 @@ export default function DesktopSidebar () {
       <NavbarMenu href='/write' icon={<PencilIcon className='h-6 w-6' />} label='글쓰기' />
       <NavbarMenu href='/profile' icon={<UserIcon className='h-6 w-6' />} label='프로필' />
 
-      <AccountMenu
-        name={mockCurrentUser.username}
-        username={mockCurrentUser.email ?? 'you'}
-        userId={mockCurrentUser._id}
-      />
+      {currentUser != null
+        ? (
+          <AccountMenu
+            name={currentUser.username}
+            username={currentUser.email ?? 'you'}
+            userId={currentUser._id}
+          />
+          )
+        : null}
     </aside>
   )
 }

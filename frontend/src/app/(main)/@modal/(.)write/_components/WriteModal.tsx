@@ -5,8 +5,9 @@ import { XIcon } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
 import PostComposer from '../../../home/_components/PostComposer'
+import type { UserProfile } from '@/lib/types'
 
-export default function WriteModal () {
+export default function WriteModal ({ currentUser }: { currentUser: UserProfile | null }) {
   const router = useRouter()
 
   function closeModal () {
@@ -49,7 +50,7 @@ export default function WriteModal () {
           <h2 id='write-modal-title' className='text-base font-bold text-gray-950'>글쓰기</h2>
           <span className='h-9 w-9' />
         </header>
-        <PostComposer variant='modal' onCreated={closeModal} />
+        <PostComposer currentUser={currentUser} variant='modal' onCreated={closeModal} />
       </div>
     </div>
   )

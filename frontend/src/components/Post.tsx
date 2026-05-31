@@ -56,13 +56,13 @@ function ActionButton ({
       type='button'
       aria-label={label}
       disabled={disabled}
-      className={`group inline-flex min-w-16 items-center gap-1 text-sm transition-colors disabled:cursor-not-allowed disabled:opacity-60 ${active ? 'text-rose-500' : 'text-gray-500 hover:text-gray-900 rounded-full'}`}
+      className={`group cursor-pointer inline-flex min-w-16 items-center gap-1 text-sm transition-colors disabled:cursor-not-allowed disabled:opacity-60 ${active ? 'text-rose-500' : 'text-gray-500 hover:text-gray-900 rounded-full'}`}
       onClick={onClick}
     >
       <span className={`inline-flex h-8 w-8 items-center justify-center rounded-full transition-colors ${active ? 'bg-rose-50' : 'hover:bg-gray-100'}`}>
         {children}
       </span>
-      {count != null && count > 0 ? <span>{formatCount(count)}</span> : null}
+      {count != null ? <span>{formatCount(count)}</span> : null}
     </button>
   )
 }

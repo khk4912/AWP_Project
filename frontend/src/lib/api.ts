@@ -110,3 +110,31 @@ export async function deleteComment (commentId: string): Promise<void> {
     throw new Error('Failed to delete comment')
   }
 }
+
+export async function followUser (targetUserId: string): Promise<void> {
+  const response = await fetch('/internal-api/follow', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ targetUserId }),
+  })
+
+  if (!response.ok) {
+    throw new Error('Failed to follow user')
+  }
+}
+
+export async function unfollowUser (targetUserId: string): Promise<void> {
+  const response = await fetch('/internal-api/follow/unfollow', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ targetUserId }),
+  })
+
+  if (!response.ok) {
+    throw new Error('Failed to unfollow user')
+  }
+}

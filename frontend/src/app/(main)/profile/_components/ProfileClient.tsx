@@ -1,17 +1,66 @@
+'use client'
+
+import { useState } from 'react'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+
 import UserAvatar from '@/components/UserAvatar'
-import { mockCurrentUser, mockFollowRelations } from '@/lib/mock'
-import type { UserProfile } from '@/lib/types'
+import { followUser, unfollowUser } from '@/lib/api'
+import type { FollowRelations, UserProfile } from '@/lib/types'
 
 type ProfileClientProps = {
-  profile?: UserProfile
+  currentUserId?: string
+  profile: UserProfile
+  relations: FollowRelations | null
 }
 
-export default function ProfileClient ({ profile = mockCurrentUser }: ProfileClientProps) {
-  const relations = profile._id === mockCurrentUser._id ? mockFollowRelations : null
+export default function ProfileClient ({ currentUserId, profile, relations }: ProfileClientProps) {
+  const queryClient = useQueryClient()
+  const isOwnProfile = currentUserId === profile._id
+  const [isFollowing, setIsFollowing] = useState(() => (
+    relations?.followers.some((user) => user._id === currentUserId) ?? false
+  ))
+  const [followerCount, setFollowerCount] = useState(relations?.followerCount ?? profile.followers?.length ?? 0)
+  const followMutation = useMutation({
+    mutationFn: async () => {
+      if (isFollowing) {
+        await unfollowUser(profile._id)
+      } else {
+        await followUser(profile._id)
+      }
+    },
+    onMutate: () => {
+      setIsFollowing((value) => !value)
+      setFollowerCount((count) => count + (isFollowing ? -1 : 1))
+    },
+    onError: () => {
+      setIsFollowing((value) => !value)
+      setFollowerCount((count) => count + (isFollowing ? 1 : -1))
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['posts'] }).catch(() => {
+        // Following feed refreshes when it refetches.
+      })
+    },
+  })
 
   return (
     <div className='border-b border-gray-200 px-4 py-6'>
-      <UserAvatar name={profile.username} seed={profile._id} size={72} />
+      <div className='flex items-start justify-between gap-4'>
+        <UserAvatar name={profile.username} seed={profile._id} size={72} />
+        {!isOwnProfile && currentUserId != null && currentUserId.length > 0
+          ? (
+            <button
+              type='button'
+              disabled={followMutation.isPending}
+              className={`rounded-full px-5 py-2 text-sm font-bold disabled:cursor-not-allowed disabled:opacity-60 ${isFollowing ? 'bg-white text-gray-950 ring-1 ring-gray-300 hover:bg-gray-50' : 'bg-gray-950 text-white hover:bg-gray-800'}`}
+              onClick={() => followMutation.mutate()}
+            >
+              {isFollowing ? '팔로잉' : '팔로우'}
+            </button>
+            )
+          : null}
+      </div>
+
       <div className='mt-4'>
         <h2 className='text-xl font-bold text-gray-950'>{profile.username}</h2>
         <p className='text-sm text-gray-500'>{profile.email ?? '@you'}</p>
@@ -26,7 +75,7 @@ export default function ProfileClient ({ profile = mockCurrentUser }: ProfileCli
         </div>
         <div>
           <dt className='sr-only'>팔로워</dt>
-          <dd><strong>{relations?.followerCount ?? profile.followers?.length ?? 0}</strong> 팔로워</dd>
+          <dd><strong>{followerCount}</strong> 팔로워</dd>
         </div>
       </dl>
     </div>

@@ -5,7 +5,7 @@ import { usePathname, useRouter } from 'next/navigation'
 
 import GLogo from './GLogo'
 import UserAvatar from './UserAvatar'
-import { mockCurrentUser } from '@/lib/mock'
+import type { UserProfile } from '@/lib/types'
 
 function getPageTitle (pathname: string): string {
   if (pathname.startsWith('/write')) return '글쓰기'
@@ -16,7 +16,7 @@ function getPageTitle (pathname: string): string {
   return ''
 }
 
-export default function TopNav () {
+export default function TopNav ({ currentUser }: { currentUser: UserProfile | null }) {
   const pathname = usePathname()
   const router = useRouter()
   const isHome = pathname === '/home'
@@ -24,7 +24,9 @@ export default function TopNav () {
   if (isHome) {
     return (
       <nav className='fixed left-0 right-0 top-0 z-10 flex h-16 w-full items-center justify-between border-b border-gray-200 bg-white px-4 md:hidden'>
-        <UserAvatar name='나' userId={mockCurrentUser._id} seed={mockCurrentUser._id} size={32} />
+        {currentUser != null
+          ? <UserAvatar name={currentUser.username} userId={currentUser._id} seed={currentUser._id} size={32} />
+          : <span className='h-8 w-8' />}
         <GLogo size={32} color='#333' />
         <button
           type='button'

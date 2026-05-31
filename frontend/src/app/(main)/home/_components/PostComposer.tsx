@@ -6,10 +6,11 @@ import { useRouter } from 'next/navigation'
 
 import UserAvatar from '@/components/UserAvatar'
 import { createPost } from '@/lib/api'
-import { mockCurrentUser } from '@/lib/mock'
+import type { UserProfile } from '@/lib/types'
 
 type PostComposerProps = {
   variant?: 'feed' | 'page' | 'modal'
+  currentUser: UserProfile | null
   onCreated?: () => void
 }
 
@@ -21,7 +22,7 @@ const variantClassName = {
 
 export const POST_CREATED_EVENT = 'post-created'
 
-export default function PostComposer ({ variant = 'feed', onCreated }: PostComposerProps) {
+export default function PostComposer ({ variant = 'feed', currentUser, onCreated }: PostComposerProps) {
   const router = useRouter()
   const queryClient = useQueryClient()
   const formRef = useRef<HTMLFormElement | null>(null)
@@ -61,7 +62,12 @@ export default function PostComposer ({ variant = 'feed', onCreated }: PostCompo
         mutation.mutate({ content: trimmedContent })
       }}
     >
-      <UserAvatar name='나' userId={mockCurrentUser._id} seed={mockCurrentUser._id} size={44} />
+      <UserAvatar
+        name={currentUser?.username ?? '나'}
+        userId={currentUser?._id}
+        seed={currentUser?._id ?? 'me'}
+        size={44}
+      />
       <div className='min-w-0 flex-1'>
         <textarea
           name='content'

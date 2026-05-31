@@ -2,19 +2,27 @@ import DesktopSidebar from './DesktopSidebar'
 import MobileBottomNav from './MobileBottomNav'
 import RightSidebar from './RightSidebar'
 import TopNav from './TopNav'
+import type { UserProfile, UserSummary } from '@/lib/types'
 
-export default function AppShell ({ children }: { children: React.ReactNode }) {
+type AppShellProps = {
+  children: React.ReactNode
+  currentUser: UserProfile | null
+  followingIds: string[]
+  users: UserSummary[]
+}
+
+export default function AppShell ({ children, currentUser, followingIds, users }: AppShellProps) {
   return (
     <div className='min-h-screen bg-white'>
       <div className='mx-auto min-h-screen max-w-[1216px] md:flex'>
-        <DesktopSidebar />
+        <DesktopSidebar currentUser={currentUser} />
         <main className='min-h-screen min-w-0 flex-1 pb-16 md:pb-0'>
           <div className='md:flex md:items-start'>
             <div className='min-w-0 md:w-[42rem]'>
-              <TopNav />
+              <TopNav currentUser={currentUser} />
               {children}
             </div>
-            <RightSidebar />
+            <RightSidebar currentUserId={currentUser?._id} initialFollowingIds={followingIds} users={users} />
           </div>
         </main>
       </div>
