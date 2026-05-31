@@ -1,4 +1,4 @@
-import type { FollowRelations, Post, UserProfile, UserSummary } from './types'
+import type { Comment, FollowRelations, Post, UserProfile, UserSummary } from './types'
 
 export const mockCurrentUser: UserProfile = {
   _id: 'user-me',
@@ -67,5 +67,43 @@ export const mockPosts: Post[] = [
     likedBy: [mockCurrentUser._id],
     commentCount: 5,
     createdAt: new Date(Date.now() - 1000 * 60 * 60 * 8).toISOString(),
+  },
+]
+
+export const mockComments: Comment[] = [
+  {
+    _id: 'comment-1',
+    author: mockUsers[1],
+    post: 'post-1',
+    content: '좋은 정보 감사합니다. 4층보다 3층이 더 조용한 편인가요?',
+    createdAt: new Date(Date.now() - 1000 * 60 * 8).toISOString(),
+  },
+  {
+    _id: 'comment-2',
+    author: mockUsers[2],
+    post: 'post-1',
+    content: '방금 다녀왔는데 창가 쪽도 아직 몇 자리 남아 있었어요.',
+    createdAt: new Date(Date.now() - 1000 * 60 * 5).toISOString(),
+  },
+  {
+    _id: 'comment-3',
+    author: mockCurrentUser,
+    post: 'post-2',
+    content: '화면 먼저 고정해두면 API 붙일 때 훨씬 덜 흔들릴 것 같아요.',
+    createdAt: new Date(Date.now() - 1000 * 60 * 45).toISOString(),
+  },
+  {
+    _id: 'comment-4',
+    author: mockUsers[0],
+    post: 'post-3',
+    content: '참여하고 싶어요. 백준 기준으로 어느 난이도 문제 풀 예정인가요?',
+    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 3).toISOString(),
+  },
+  {
+    _id: 'comment-5',
+    author: mockUsers[1],
+    post: 'post-3',
+    content: '저도 가능하면 같이 가겠습니다. 시간 확정되면 알려주세요.',
+    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(),
   },
 ]
