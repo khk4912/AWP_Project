@@ -1,10 +1,11 @@
 'use client'
 
-import { ArrowLeftIcon, PencilIcon } from 'lucide-react'
+import { ArrowLeftIcon, LogOutIcon } from 'lucide-react'
+import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 
 import GLogo from './GLogo'
-import UserAvatar from './UserAvatar'
+import ThemeToggle from './ThemeToggle'
 import type { UserProfile } from '@/lib/types'
 
 function getPageTitle (pathname: string): string {
@@ -25,17 +26,18 @@ export default function TopNav ({ currentUser }: { currentUser: UserProfile | nu
     return (
       <nav className='fixed left-0 right-0 top-0 z-30 flex h-16 w-full items-center justify-between border-b border-gray-200 bg-white px-4 md:hidden'>
         {currentUser != null
-          ? <UserAvatar name={currentUser.username} userId={currentUser._id} seed={currentUser._id} size={32} />
-          : <span className='h-8 w-8' />}
-        <GLogo size={32} color='#333' />
-        <button
-          type='button'
-          aria-label='글쓰기'
-          className='inline-flex h-8 w-8 items-center justify-center rounded-full text-gray-900 hover:bg-gray-100 cursor-pointer'
-          onClick={() => window.location.assign('/write')}
-        >
-          <PencilIcon className='h-5 w-5' />
-        </button>
+          ? (
+            <Link
+              href='/logout'
+              aria-label='로그아웃'
+              className='inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-full text-gray-900 hover:bg-gray-100'
+            >
+              <LogOutIcon className='h-5 w-5' />
+            </Link>
+            )
+          : <span className='h-10 w-10' />}
+        <GLogo size={32} />
+        <ThemeToggle compact />
       </nav>
     )
   }

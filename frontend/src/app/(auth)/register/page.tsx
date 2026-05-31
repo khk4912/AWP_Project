@@ -16,7 +16,7 @@ export default async function RegisterPage ({ searchParams }: RegisterPageProps)
     <main className='flex min-h-screen items-center justify-center bg-white px-5 py-10 text-gray-950'>
       <section className='w-[80%] max-w-[26rem] text-center'>
         <div className='flex flex-col items-center space-y-8'>
-          <GLogo size={60} color='#111827' />
+          <GLogo size={60} />
           <h1 className='text-2xl font-extrabold tracking-normal text-gray-950 sm:text-4xl'>
             회원가입
           </h1>
