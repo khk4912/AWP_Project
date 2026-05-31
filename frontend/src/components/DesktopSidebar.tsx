@@ -23,8 +23,8 @@ function NavbarMenu ({ href, icon, label }: NavbarMenuProps) {
     <Link
       href={href}
       className={`text-lg flex items-center gap-4 py-2 ml-[-12]
-                 ${isActive ? 'text-blue-500 font-bold' : 'text-gray-700 hover:text-gray-900'}
-                  rounded-full transition-colors hover:bg-gray-100 px-4`}
+                 ${isActive ? 'text-blue-500 font-bold bg-gray-100' : 'text-gray-700 hover:text-gray-900'}
+                  rounded-full transition-colors duration-200 hover:bg-gray-100 px-4`}
     >
       {icon}
       {label}
