@@ -42,7 +42,7 @@ export default function WriteModal ({ currentUser }: { currentUser: UserProfile 
           <button
             type='button'
             aria-label='닫기'
-            className='inline-flex h-9 w-9 items-center justify-center rounded-full text-gray-700 hover:bg-gray-100 hover:text-gray-950'
+            className='inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-full text-gray-700 hover:bg-gray-100 hover:text-gray-950'
             onClick={closeModal}
           >
             <XIcon className='h-5 w-5' />
