@@ -1,29 +1,27 @@
 'use client'
 
 import Post from '@/components/Post'
-import { mockCurrentUser, mockPosts } from '@/lib/mock'
-
+import type { PostsResponse } from '@/lib/types'
 import type { FeedTab } from './FeedTabs'
 
 type HomeFeedProps = {
   activeTab: FeedTab
+  initialPosts?: PostsResponse
+  followingPosts?: PostsResponse
 }
 
-export default function HomeFeed ({ activeTab }: HomeFeedProps) {
-  const posts = activeTab === 'following'
-    ? mockPosts.filter((post) => post.author._id !== mockCurrentUser._id).slice(0, 2)
-    : mockPosts
-
+export default function HomeFeed ({ activeTab, initialPosts, followingPosts }: HomeFeedProps) {
   return (
-    <div>
-      {posts.map((post) => (
-        <Post
-          key={post._id}
-          post={post}
-          currentUserId={mockCurrentUser._id}
-          href={`/post/${post._id}`}
-        />
-      ))}
-    </div>
+    <section aria-label='피드' className='divide-y divide-gray-100'>
+      {(activeTab === 'following' ? followingPosts : initialPosts)?.posts.map((post) => (
+        <Post key={post._id} post={post} href={`/post/${post._id}`} />
+      )) ?? (
+        <p className='px-4 py-8 text-center text-sm text-gray-500'>
+          {activeTab === 'following'
+            ? '팔로잉하는 사용자의 게시물이 없습니다.'
+            : '추천 게시물이 없습니다.'}
+        </p>
+      )}
+    </section>
   )
 }

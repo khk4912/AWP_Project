@@ -81,10 +81,12 @@ export async function getAuthToken (): Promise<string | null> {
   const cookieStore = await cookies()
   return cookieStore.get(AUTH_COOKIE_NAME)?.value ?? null
 }
+
 export async function setAuthToken (token: string): Promise<void> {
   const cookieStore = await cookies()
   cookieStore.set(AUTH_COOKIE_NAME, token, getAuthCookieOptions())
 }
+
 export async function clearAuthToken (): Promise<void> {
   const cookieStore = await cookies()
   cookieStore.set(AUTH_COOKIE_NAME, '', {
@@ -92,6 +94,7 @@ export async function clearAuthToken (): Promise<void> {
     maxAge: 0,
   })
 }
+
 export async function requireAuthToken (): Promise<string> {
   const token = await getAuthToken()
   if (!token || isTokenExpired(token)) {

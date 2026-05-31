@@ -9,6 +9,7 @@ type UserAvatarProps = {
   seed?: string
   size?: number
   className?: string
+  noHref?: boolean
 }
 
 const avatarPalettes = [
@@ -40,6 +41,7 @@ export default function UserAvatar ({
   seed = name,
   size = 40,
   className = '',
+  noHref = false,
 }: UserAvatarProps) {
   const palette = avatarPalettes[hashString(seed || name) % avatarPalettes.length]
   const label = name.trim() || '사용자'
@@ -62,6 +64,8 @@ export default function UserAvatar ({
   )
 
   if (userId == null || userId.length === 0) return avatar
+
+  if (noHref) return avatar
 
   return (
     <Link
