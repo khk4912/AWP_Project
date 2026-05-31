@@ -7,11 +7,10 @@ import type { UserProfile, UserSummary } from '@/lib/types'
 type AppShellProps = {
   children: React.ReactNode
   currentUser: UserProfile | null
-  followingIds: string[]
   users: UserSummary[]
 }
 
-export default function AppShell ({ children, currentUser, followingIds, users }: AppShellProps) {
+export default function AppShell ({ children, currentUser, users }: AppShellProps) {
   return (
     <div className='min-h-screen bg-white'>
       <div className='mx-auto min-h-screen max-w-[1216px] md:flex'>
@@ -22,7 +21,7 @@ export default function AppShell ({ children, currentUser, followingIds, users }
               <TopNav currentUser={currentUser} />
               {children}
             </div>
-            <RightSidebar currentUserId={currentUser?._id} initialFollowingIds={followingIds} users={users} />
+            <RightSidebar currentUserId={currentUser?._id} users={users} />
           </div>
         </main>
       </div>
