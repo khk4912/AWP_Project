@@ -13,7 +13,7 @@ type LoginFormProps = {
 const initialState: LoginFormState = {}
 
 export default function LoginForm ({ next }: LoginFormProps) {
-  const [state, formAction, pending] = useActionState(loginAction, initialState)
+  const [state, formAction, isPending] = useActionState(loginAction, initialState)
 
   return (
     <form action={formAction} className='mt-20 space-y-5 text-left px-1'>
@@ -41,10 +41,10 @@ export default function LoginForm ({ next }: LoginFormProps) {
 
       <button
         type='submit'
-        disabled={pending}
-        className='mt-8 h-14 w-full rounded-full bg-blue-500 px-5 text-base font-bold text-white transition-colors hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:bg-gray-300 sm:h-16 sm:text-lg'
+        disabled={isPending}
+        className='mt-8 h-14 w-full rounded-full bg-blue-500 px-5 text-base font-bold text-white transition-colors hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:bg-blue-300 sm:h-16 sm:text-lg'
       >
-        {pending ? '로그인 중...' : '로그인'}
+        {isPending ? '로그인 중...' : '로그인'}
       </button>
     </form>
   )

@@ -1,10 +1,10 @@
 'use client'
 
-import { ArrowLeftIcon, LogOutIcon } from 'lucide-react'
-import Link from 'next/link'
+import { ArrowLeftIcon } from 'lucide-react'
 import { usePathname, useRouter } from 'next/navigation'
 
 import GLogo from './GLogo'
+import LogoutButton from './LogoutButton'
 import ThemeToggle from './ThemeToggle'
 import type { UserProfile } from '@/lib/types'
 
@@ -27,13 +27,7 @@ export default function TopNav ({ currentUser }: { currentUser: UserProfile | nu
       <nav className='fixed left-0 right-0 top-0 z-30 flex h-16 w-full items-center justify-between border-b border-gray-200 bg-white px-4 md:hidden'>
         {currentUser != null
           ? (
-            <Link
-              href='/logout'
-              aria-label='로그아웃'
-              className='inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-full text-gray-900 hover:bg-gray-100'
-            >
-              <LogOutIcon className='h-5 w-5' />
-            </Link>
+            <LogoutButton className='inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-full text-gray-900 hover:bg-gray-100' />
             )
           : <span className='h-10 w-10' />}
         <GLogo size={32} />

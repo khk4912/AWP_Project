@@ -2,11 +2,12 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { BellIcon, HomeIcon, LogOutIcon, SearchIcon, UserIcon, PencilIcon } from 'lucide-react'
+import { BellIcon, HomeIcon, SearchIcon, UserIcon, PencilIcon } from 'lucide-react'
 
 import type { UserProfile } from '@/lib/types'
 
 import GLogo from './GLogo'
+import LogoutButton from './LogoutButton'
 import ThemeToggle from './ThemeToggle'
 import UserAvatar from './UserAvatar'
 
@@ -65,14 +66,10 @@ export default function DesktopSidebar ({ currentUser }: { currentUser: UserProf
           <ThemeToggle />
           {currentUser != null
             ? (
-              <Link
-                href='/logout'
-                aria-label='로그아웃'
+              <LogoutButton
                 title='로그아웃'
                 className='inline-flex h-11 w-11 cursor-pointer items-center justify-center rounded-full text-gray-700 transition-colors hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
-              >
-                <LogOutIcon className='h-5 w-5' />
-              </Link>
+              />
               )
             : null}
         </div>

@@ -1,44 +1,20 @@
 'use server'
 
 import { redirect } from 'next/navigation'
+import { revalidatePath } from 'next/cache'
 
 import { setAuthToken } from '@/lib/auth'
 import type { LoginResponse } from '@/lib/types'
 
+import {
+  getBackendUrl,
+  getStringField,
+  readErrorMessage,
+  safeRedirectPath,
+} from '../_lib/action-utils'
+
 export type RegisterFormState = {
   error?: string
-}
-
-function getBackendUrl (): string {
-  return process.env.BACKEND_URL ?? 'http://localhost:3000'
-}
-
-function safeRedirectPath (value: FormDataEntryValue | null): string {
-  if (typeof value !== 'string') return '/home'
-  if (!value.startsWith('/') || value.startsWith('//')) return '/home'
-  return value
-}
-
-function getStringField (formData: FormData, name: string): string {
-  const value = formData.get(name)
-  return typeof value === 'string' ? value : ''
-}
-
-async function readErrorMessage (response: Response, fallback: string): Promise<string> {
-  try {
-    const body = await response.json() as { error?: unknown; message?: unknown }
-    if (typeof body.message === 'string') return body.message
-    if (typeof body.error === 'string') return body.error
-    if (typeof body.error === 'object' && body.error !== null && 'message' in body.error) {
-      const message = (body.error as { message?: unknown }).message
-      if (typeof message === 'string') return message
-      if (Array.isArray(message)) return message.join('\n')
-    }
-  } catch {
-    return fallback
-  }
-
-  return fallback
 }
 
 export async function registerAction (
@@ -83,6 +59,7 @@ export async function registerAction (
 
   const data = await loginResponse.json() as LoginResponse
   await setAuthToken(data.accessToken)
+  revalidatePath('/', 'layout')
 
   redirect(next)
 }

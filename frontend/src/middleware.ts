@@ -50,13 +50,38 @@ function isPublicFile (pathname: string): boolean {
   return publicFilePattern.test(pathname)
 }
 
+function getForwardedHeader (request: NextRequest, name: string): string | null {
+  return request.headers.get(name)?.split(',')[0]?.trim() || null
+}
+
+function isLocalHost (host: string): boolean {
+  return host.startsWith('localhost') || host.startsWith('127.0.0.1') || host.startsWith('[::1]')
+}
+
+function getRequestOrigin (request: NextRequest): string {
+  const host = getForwardedHeader(request, 'x-forwarded-host') ??
+    request.headers.get('host') ??
+    request.nextUrl.host
+  const forwardedProtocol = getForwardedHeader(request, 'x-forwarded-proto')
+  const protocol = isLocalHost(host)
+    ? (forwardedProtocol ?? request.nextUrl.protocol.replace(':', ''))
+    : 'https'
+
+  return `${protocol}://${host}`
+}
+
 function getLoginUrl (request: NextRequest): URL {
-  const loginUrl = new URL('/login', request.url)
+  const loginUrl = new URL('/login', getRequestOrigin(request))
+  const searchParams = new URLSearchParams()
   const nextPath = `${request.nextUrl.pathname}${request.nextUrl.search}`
 
   if (nextPath !== '/') {
-    loginUrl.searchParams.set('next', nextPath)
+    searchParams.set('next', nextPath)
   }
+
+  searchParams.forEach((value, key) => {
+    loginUrl.searchParams.set(key, value)
+  })
 
   return loginUrl
 }
