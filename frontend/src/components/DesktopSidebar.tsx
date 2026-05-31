@@ -44,7 +44,7 @@ function AccountMenu ({ name, username, userId }: AccountMenuProps) {
       <UserAvatar name={name} userId={userId} seed={userId} size={40} noHref />
       <span className='min-w-0'>
         <span className='block truncate font-medium'>{name}</span>
-        <span className='block truncate text-sm text-gray-500'>@{username}</span>
+        <span className='block truncate text-sm text-gray-500'>{username}</span>
       </span>
     </Link>
   )
