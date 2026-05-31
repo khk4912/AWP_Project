@@ -21,6 +21,7 @@ export default function HomeFeed ({ activeTab }: HomeFeedProps) {
           key={post._id}
           post={post}
           currentUserId={mockCurrentUser._id}
+          href={`/post/${post._id}`}
         />
       ))}
     </div>

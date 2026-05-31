@@ -1,6 +1,7 @@
 'use client'
 
 import UserAvatar from '@/components/UserAvatar'
+import { mockCurrentUser } from '@/lib/mock'
 
 type PostComposerProps = {
   variant?: 'feed' | 'page' | 'modal'
@@ -20,7 +21,7 @@ export default function PostComposer ({ variant = 'feed' }: PostComposerProps) {
       className={`${variantClassName[variant]} gap-4 px-4 py-3 items-start`}
       onSubmit={(event) => event.preventDefault()}
     >
-      <UserAvatar name='나' seed='me' size={44} />
+      <UserAvatar name='나' userId={mockCurrentUser._id} seed={mockCurrentUser._id} size={44} />
       <div className='min-w-0 flex-1'>
         <textarea
           className='max-h-48 min-h-10 w-full resize-none overflow-hidden rounded p-2 font-[16px] leading-6 focus:outline-none focus:ring-1 focus:ring-blue-500'
