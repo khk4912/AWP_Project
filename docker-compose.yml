@@ -16,6 +16,8 @@ services:
       dockerfile: frontend/Dockerfile
     expose:
       - "3001"
+    environment:
+      BACKEND_URL: http://backend:3000
     restart: unless-stopped
 
   backend:
