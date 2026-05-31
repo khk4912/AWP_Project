@@ -2,8 +2,7 @@ import { notFound } from 'next/navigation'
 
 import Post from '@/components/Post'
 import { getAuthToken, getUserIdFromToken } from '@/lib/auth'
-import { mockComments } from '@/lib/mock'
-import { getPost } from '@/lib/server/api'
+import { getComments, getPost } from '@/lib/server/api'
 import type { Post as PostModel } from '@/lib/types'
 
 import CommentSection from './_components/CommentSection'
@@ -27,7 +26,7 @@ export default async function PostPage ({ params }: PostPageProps) {
 
   const token = await getAuthToken()
   const currentUserId = getUserIdFromToken(token)
-  const comments = mockComments.filter((comment) => comment.post === post._id)
+  const comments = await getComments(post._id)
 
   return (
     <div className='min-h-screen max-w-2xl border-x border-gray-200 bg-white pt-16 md:pt-0
@@ -35,7 +34,7 @@ export default async function PostPage ({ params }: PostPageProps) {
     >
       <ScrollToTop />
       <Post post={post} currentUserId={currentUserId} inDetailView />
-      <CommentSection comments={comments} />
+      <CommentSection comments={comments} currentUserId={currentUserId} postId={post._id} />
     </div>
 
   )

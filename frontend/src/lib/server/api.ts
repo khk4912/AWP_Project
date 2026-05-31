@@ -1,7 +1,7 @@
 import 'server-only'
 
 import { requireAuthToken } from '@/lib/auth'
-import type { Post, PostsResponse } from '@/lib/types'
+import type { Comment, Post, PostsResponse } from '@/lib/types'
 
 const backendUrl = process.env.BACKEND_URL ?? 'http://localhost:3000'
 
@@ -44,4 +44,16 @@ export async function getPost (postId: string): Promise<Post> {
   }
 
   return res.json() as Promise<Post>
+}
+
+export async function getComments (postId: string): Promise<Comment[]> {
+  const res = await fetch(`${backendUrl}/comments/post/${postId}`, {
+    cache: 'no-store',
+  })
+
+  if (!res.ok) {
+    throw new Error('Failed to fetch comments')
+  }
+
+  return res.json() as Promise<Comment[]>
 }

@@ -1,4 +1,4 @@
-import type { PostsResponse } from './types'
+import type { Comment, PostsResponse } from './types'
 
 type PostFeed = 'recommended' | 'following'
 
@@ -66,5 +66,47 @@ export async function unlikePost (postId: string): Promise<void> {
 
   if (!response.ok) {
     throw new Error('Failed to unlike post')
+  }
+}
+
+export async function fetchComments (postId: string): Promise<Comment[]> {
+  const response = await fetch(`/internal-api/comments/post/${postId}`, {
+    cache: 'no-store',
+  })
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch comments')
+  }
+
+  return response.json() as Promise<Comment[]>
+}
+
+export async function createComment ({
+  postId,
+  content,
+}: {
+  postId: string
+  content: string
+}): Promise<void> {
+  const response = await fetch('/internal-api/comments', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ postId, content }),
+  })
+
+  if (!response.ok) {
+    throw new Error('Failed to create comment')
+  }
+}
+
+export async function deleteComment (commentId: string): Promise<void> {
+  const response = await fetch(`/internal-api/comments/${commentId}`, {
+    method: 'DELETE',
+  })
+
+  if (!response.ok) {
+    throw new Error('Failed to delete comment')
   }
 }
