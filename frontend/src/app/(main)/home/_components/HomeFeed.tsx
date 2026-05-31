@@ -12,10 +12,11 @@ const PAGE_SIZE = 10
 
 type HomeFeedProps = {
   activeTab: FeedTab
+  currentUserId?: string
   initialPosts: PostsResponse
 }
 
-export default function HomeFeed ({ activeTab, initialPosts }: HomeFeedProps) {
+export default function HomeFeed ({ activeTab, currentUserId, initialPosts }: HomeFeedProps) {
   const sentinelRef = useRef<HTMLDivElement | null>(null)
   const {
     data,
@@ -69,7 +70,12 @@ export default function HomeFeed ({ activeTab, initialPosts }: HomeFeedProps) {
       <div className='divide-y divide-gray-100'>
         {posts.length > 0
           ? posts.map((post) => (
-            <Post key={post._id} post={post} href={`/post/${post._id}`} />
+            <Post
+              key={post._id}
+              post={post}
+              currentUserId={currentUserId}
+              href={`/post/${post._id}`}
+            />
           ))
           : (
             <p className='px-4 py-8 text-center text-sm text-gray-500'>

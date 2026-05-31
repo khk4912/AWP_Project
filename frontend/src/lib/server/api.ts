@@ -1,7 +1,7 @@
 import 'server-only'
 
 import { requireAuthToken } from '@/lib/auth'
-import type { PostsResponse } from '@/lib/types'
+import type { Post, PostsResponse } from '@/lib/types'
 
 const backendUrl = process.env.BACKEND_URL ?? 'http://localhost:3000'
 
@@ -32,4 +32,16 @@ export async function getFollowingPosts (skip = 0, limit = 10): Promise<PostsRes
   }
 
   return res.json() as Promise<PostsResponse>
+}
+
+export async function getPost (postId: string): Promise<Post> {
+  const res = await fetch(`${backendUrl}/posts/${postId}`, {
+    cache: 'no-store',
+  })
+
+  if (!res.ok) {
+    throw new Error('Failed to fetch post')
+  }
+
+  return res.json() as Promise<Post>
 }

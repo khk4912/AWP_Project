@@ -49,7 +49,7 @@ export default function WriteModal () {
           <h2 id='write-modal-title' className='text-base font-bold text-gray-950'>글쓰기</h2>
           <span className='h-9 w-9' />
         </header>
-        <PostComposer variant='modal' />
+        <PostComposer variant='modal' onCreated={closeModal} />
       </div>
     </div>
   )

@@ -8,12 +8,17 @@ type FetchPostsOptions = {
   limit?: number
 }
 
+type CreatePostInput = {
+  content: string
+  imageUrl?: string
+}
+
 export async function fetchPosts ({
   feed,
   skip = 0,
   limit = 10,
 }: FetchPostsOptions): Promise<PostsResponse> {
-  const endpoint = feed === 'following' ? '/api/posts/feed' : '/api/posts'
+  const endpoint = feed === 'following' ? '/internal-api/posts/feed' : '/internal-api/posts'
   const params = new URLSearchParams({
     skip: String(skip),
     limit: String(limit),
@@ -28,4 +33,38 @@ export async function fetchPosts ({
   }
 
   return response.json() as Promise<PostsResponse>
+}
+
+export async function createPost ({ content, imageUrl = '' }: CreatePostInput): Promise<void> {
+  const response = await fetch('/internal-api/posts', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ content, imageUrl }),
+  })
+
+  if (!response.ok) {
+    throw new Error('Failed to create post')
+  }
+}
+
+export async function likePost (postId: string): Promise<void> {
+  const response = await fetch(`/internal-api/posts/${postId}/like`, {
+    method: 'POST',
+  })
+
+  if (!response.ok) {
+    throw new Error('Failed to like post')
+  }
+}
+
+export async function unlikePost (postId: string): Promise<void> {
+  const response = await fetch(`/internal-api/posts/${postId}/unlike`, {
+    method: 'POST',
+  })
+
+  if (!response.ok) {
+    throw new Error('Failed to unlike post')
+  }
 }
