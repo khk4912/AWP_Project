@@ -11,10 +11,16 @@ import type { Comment as CommentModel } from '@/lib/types'
 type CommentSectionProps = {
   comments: CommentModel[]
   currentUserId?: string
+  onCommentCountDelta?: (delta: number) => void
   postId: string
 }
 
-export default function CommentSection ({ comments, currentUserId, postId }: CommentSectionProps) {
+export default function CommentSection ({
+  comments,
+  currentUserId,
+  onCommentCountDelta,
+  postId,
+}: CommentSectionProps) {
   const queryClient = useQueryClient()
   const [content, setContent] = useState('')
   const [deletingCommentId, setDeletingCommentId] = useState<string | null>(null)
@@ -27,6 +33,7 @@ export default function CommentSection ({ comments, currentUserId, postId }: Com
     mutationFn: createComment,
     onSuccess: () => {
       setContent('')
+      onCommentCountDelta?.(1)
       queryClient.invalidateQueries({ queryKey: ['comments', postId] }).catch(() => {
         // The section keeps the existing comments if refetch fails.
       })
@@ -40,6 +47,7 @@ export default function CommentSection ({ comments, currentUserId, postId }: Com
     onMutate: (commentId) => setDeletingCommentId(commentId),
     onSettled: () => setDeletingCommentId(null),
     onSuccess: () => {
+      onCommentCountDelta?.(-1)
       queryClient.invalidateQueries({ queryKey: ['comments', postId] }).catch(() => {
         // The section keeps the existing comments if refetch fails.
       })

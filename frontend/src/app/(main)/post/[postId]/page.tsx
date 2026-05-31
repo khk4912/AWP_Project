@@ -1,11 +1,10 @@
 import { notFound } from 'next/navigation'
 
-import Post from '@/components/Post'
 import { getAuthToken, getUserIdFromToken } from '@/lib/auth'
 import { getComments, getPost } from '@/lib/server/api'
 import type { Post as PostModel } from '@/lib/types'
 
-import CommentSection from './_components/CommentSection'
+import PostDetail from './_components/PostDetail'
 import ScrollToTop from './_components/ScrollToTop'
 
 type PostPageProps = {
@@ -33,8 +32,7 @@ export default async function PostPage ({ params }: PostPageProps) {
                     flex-row'
     >
       <ScrollToTop />
-      <Post post={post} currentUserId={currentUserId} inDetailView />
-      <CommentSection comments={comments} currentUserId={currentUserId} postId={post._id} />
+      <PostDetail comments={comments} currentUserId={currentUserId} post={post} />
     </div>
 
   )
