@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { type InfiniteData, useQueryClient } from '@tanstack/react-query'
-import { HeartIcon, MessageCircleIcon, MoreHorizontalIcon, ShareIcon } from 'lucide-react'
+import { HeartIcon, MessageCircleIcon, MoreHorizontalIcon } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 
@@ -16,7 +16,6 @@ type PostProps = {
   currentUserId?: string
   onLike?: (post: PostModel) => void
   onComment?: (post: PostModel) => void
-  onShare?: (post: PostModel) => void
   onMore?: (post: PostModel) => void
   href?: string
   inDetailView?: boolean
@@ -94,13 +93,13 @@ function ActionButton ({
       type='button'
       aria-label={label}
       disabled={disabled}
-      className={`group cursor-pointer inline-flex min-w-16 items-center gap-1 text-sm transition-colors disabled:cursor-not-allowed disabled:opacity-60 ${active ? 'text-rose-500' : 'text-gray-500 hover:text-gray-900 rounded-full'}`}
+      className={`group inline-flex h-9 min-w-20 cursor-pointer items-center justify-center gap-1.5 rounded-full px-2 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-60 ${active ? 'bg-rose-50 text-rose-500' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-900'}`}
       onClick={onClick}
     >
-      <span className={`inline-flex h-8 w-8 items-center justify-center rounded-full transition-colors ${active ? 'bg-rose-50' : 'hover:bg-gray-100'}`}>
+      <span className='inline-flex h-5 w-5 items-center justify-center'>
         {children}
       </span>
-      {count != null ? <span>{formatCount(count)}</span> : null}
+      {count != null ? <span className='min-w-4 text-left tabular-nums'>{formatCount(count)}</span> : null}
     </button>
   )
 }
@@ -110,7 +109,6 @@ export default function Post ({
   currentUserId,
   onLike,
   onComment,
-  onShare,
   onMore,
   href,
   inDetailView = false
@@ -127,7 +125,6 @@ export default function Post ({
   const menuRef = useRef<HTMLDivElement | null>(null)
 
   const createdAt = new Date(post.createdAt)
-  const updatedAt = post.updatedAt ? new Date(post.updatedAt) : null
 
   useEffect(() => {
     if (!isMenuOpen) return
@@ -270,7 +267,7 @@ export default function Post ({
           {post.content}
         </p>
 
-        <footer className='relative z-20 mt-4 flex max-w-md items-center gap-4'>
+        <footer className='relative z-20 mt-4 flex max-w-xs items-center gap-2'>
           <ActionButton
             label='좋아요'
             count={likeCount}
@@ -289,17 +286,10 @@ export default function Post ({
             <MessageCircleIcon className='h-5 w-5' />
           </ActionButton>
 
-          <ActionButton
-            label='공유'
-            onClick={() => onShare?.(post)}
-          >
-            <ShareIcon className='h-5 w-5' />
-          </ActionButton>
         </footer>
         {inDetailView && (
           <div className='mt-4 text-sm text-gray-500'>
             <p>{createdAt.toLocaleString()}에 작성됨</p>
-            {updatedAt && <p>{updatedAt.toLocaleString()}에 수정됨</p>}
           </div>
         )}
       </div>
