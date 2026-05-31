@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import { type InfiniteData, useQueryClient } from '@tanstack/react-query'
 import { HeartIcon, MessageCircleIcon, MoreHorizontalIcon, ShareIcon } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -8,7 +9,7 @@ import { useRouter } from 'next/navigation'
 import UserAvatar from './UserAvatar'
 import { likePost, unlikePost } from '@/lib/api'
 import { relativeTime } from '@/lib/format'
-import type { Post as PostModel } from '@/lib/types'
+import type { Post as PostModel, PostsResponse, UserSummary } from '@/lib/types'
 
 type PostProps = {
   post: PostModel
@@ -31,9 +32,46 @@ function isLikedByCurrentUser (post: PostModel, currentUserId?: string): boolean
   if (currentUserId == null || currentUserId.length === 0) return false
 
   return post.likedBy.some((user) => {
-    if (typeof user === 'string') return user === currentUserId
-    return user._id === currentUserId
+    return getLikedUserId(user) === currentUserId
   })
+}
+
+function getLikedUserId (user: string | UserSummary): string {
+  if (typeof user === 'string') return user
+  return user._id
+}
+
+function updatePostLikeState (
+  post: PostModel,
+  postId: string,
+  currentUserId: string,
+  liked: boolean
+): PostModel {
+  if (post._id !== postId) return post
+
+  const likedBy = post.likedBy.filter((user) => getLikedUserId(user) !== currentUserId)
+
+  return {
+    ...post,
+    likedBy: liked ? [...likedBy, currentUserId] : likedBy,
+  }
+}
+
+function updateCachedPostsLikeState (
+  data: InfiniteData<PostsResponse> | undefined,
+  postId: string,
+  currentUserId: string,
+  liked: boolean
+) {
+  if (data == null) return data
+
+  return {
+    ...data,
+    pages: data.pages.map((page) => ({
+      ...page,
+      posts: page.posts.map((post) => updatePostLikeState(post, postId, currentUserId, liked)),
+    })),
+  }
 }
 
 function ActionButton ({
@@ -78,6 +116,7 @@ export default function Post ({
   inDetailView = false
 }: PostProps) {
   const router = useRouter()
+  const queryClient = useQueryClient()
   const commentCount = post.commentCount ?? 0
   const authorName = post.author.username
   const isOwnPost = currentUserId === post.author._id
@@ -123,14 +162,27 @@ export default function Post ({
     setIsLikePending(true)
     setIsLiked(nextLiked)
     setLikeCount((count) => count + (nextLiked ? 1 : -1))
+    queryClient.setQueriesData<InfiniteData<PostsResponse>>(
+      { queryKey: ['posts'] },
+      (data) => updateCachedPostsLikeState(data, post._id, currentUserId, nextLiked)
+    )
 
     const request = nextLiked ? likePost(post._id) : unlikePost(post._id)
     request
       .catch(() => {
         setIsLiked(!nextLiked)
         setLikeCount((count) => count + (nextLiked ? -1 : 1))
+        queryClient.setQueriesData<InfiniteData<PostsResponse>>(
+          { queryKey: ['posts'] },
+          (data) => updateCachedPostsLikeState(data, post._id, currentUserId, !nextLiked)
+        )
       })
-      .finally(() => setIsLikePending(false))
+      .finally(() => {
+        setIsLikePending(false)
+        queryClient.invalidateQueries({ queryKey: ['posts'] }).catch(() => {
+          // Feed cache is already updated optimistically.
+        })
+      })
   }
 
   function handleCommentClick () {
