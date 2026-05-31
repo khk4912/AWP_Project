@@ -17,7 +17,7 @@ export default function AppShell ({ children, currentUser, users }: AppShellProp
         <DesktopSidebar currentUser={currentUser} />
         <main className='min-h-screen min-w-0 flex-1 pb-16 md:pb-0'>
           <div className='md:flex md:items-start'>
-            <div className='min-w-0 md:w-[42rem]'>
+            <div className='min-w-0 flex-1 xl:w-[42rem] xl:flex-none'>
               <TopNav currentUser={currentUser} />
               {children}
             </div>

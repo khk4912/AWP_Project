@@ -28,7 +28,7 @@ export default async function PostPage ({ params }: PostPageProps) {
   const comments = await getComments(post._id)
 
   return (
-    <div className='min-h-screen max-w-2xl border-x border-gray-200 bg-white pt-16 md:pt-0
+    <div className='min-h-screen w-full border-x border-gray-200 bg-white pt-16 md:pt-0
                     flex-row'
     >
       <ScrollToTop />

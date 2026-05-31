@@ -27,7 +27,7 @@ export default async function HomePage ({ searchParams }: HomePageProps) {
     : await getPosts(0)
 
   return (
-    <section className='min-h-screen max-w-2xl border-x border-gray-200 bg-white pt-16 md:pt-0'>
+    <section className='min-h-screen w-full border-x border-gray-200 bg-white pt-16 md:pt-0'>
       <FeedTabs activeTab={activeTab} />
       <PostComposer currentUser={currentUser} />
       <HomeFeed activeTab={activeTab} currentUserId={currentUserId} initialPosts={initialPosts} />

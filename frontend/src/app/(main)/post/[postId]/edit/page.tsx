@@ -23,7 +23,7 @@ export default async function EditPostPage ({ params }: EditPostPageProps) {
   if (currentUserId !== post.author._id) notFound()
 
   return (
-    <section className='min-h-screen max-w-2xl border-x border-gray-200 bg-white pt-16 md:pt-0'>
+    <section className='min-h-screen w-full border-x border-gray-200 bg-white pt-16 md:pt-0'>
       <header className='border-b border-gray-200 px-4 py-4'>
         <h1 className='text-lg font-bold text-gray-950'>게시글 수정</h1>
       </header>
