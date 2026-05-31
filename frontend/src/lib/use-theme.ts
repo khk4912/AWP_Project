@@ -12,8 +12,8 @@ function getSystemTheme (): Theme {
 function getSnapshot (): Theme {
   if (typeof document === 'undefined') return 'light'
 
-  const theme = document.documentElement.dataset.theme
-  return isTheme(theme ?? null) ? theme : getSystemTheme()
+  const theme = document.documentElement.dataset.theme ?? null
+  return isTheme(theme) ? theme : getSystemTheme()
 }
 
 function getServerSnapshot (): Theme {
