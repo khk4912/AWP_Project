@@ -15,6 +15,7 @@ type PostProps = {
   onShare?: (post: PostModel) => void
   onMore?: (post: PostModel) => void
   href?: string
+  inDetailView?: boolean
 }
 
 function formatCount (count: number): string {
@@ -68,28 +69,29 @@ export default function Post ({
   onShare,
   onMore,
   href,
+  inDetailView = false
 }: PostProps) {
   const isLiked = isLikedByCurrentUser(post, currentUserId)
   const likeCount = post.likedBy.length
   const commentCount = post.commentCount ?? 0
   const authorName = post.author.username
-  const postContent = href != null
-    ? (
-      <Link href={href} className='mt-1 block rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'>
-        <p className='whitespace-pre-wrap leading-6 text-gray-950'>
-          {post.content}
-        </p>
-      </Link>
-      )
-    : (
-      <p className='mt-1 whitespace-pre-wrap leading-6 text-gray-950'>
-        {post.content}
-      </p>
-      )
+
+  const createdAt = new Date(post.createdAt)
+  const updatedAt = post.updatedAt ? new Date(post.updatedAt) : null
 
   return (
-    <article className='flex gap-3 border-b border-gray-100 px-4 py-5 transition-colors hover:bg-gray-50/50'>
-      <UserAvatar name={authorName} seed={post.author._id} size={44} />
+    <article className='relative flex gap-3 border-b border-gray-100 px-4 py-5 transition-colors hover:bg-gray-50/50'>
+      {href != null && (
+        <Link
+          href={href}
+          aria-label='게시글 상세로 이동'
+          className='absolute inset-0 z-10 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset'
+        />
+      )}
+
+      <div className='relative z-20 shrink-0'>
+        <UserAvatar name={authorName} userId={post.author._id} seed={post.author._id} size={44} />
+      </div>
 
       <div className='min-w-0 flex-1'>
         <header className='flex items-start justify-between gap-3'>
@@ -103,16 +105,18 @@ export default function Post ({
           <button
             type='button'
             aria-label='게시글 메뉴'
-            className='-mr-2 -mt-1 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-gray-400 hover:bg-gray-100 hover:text-gray-700'
+            className='relative z-20 -mr-2 -mt-1 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-gray-400 hover:bg-gray-100 hover:text-gray-700'
             onClick={() => onMore?.(post)}
           >
             <MoreHorizontalIcon className='h-5 w-5' />
           </button>
         </header>
 
-        {postContent}
+        <p className='mt-1 whitespace-pre-wrap leading-6 text-gray-950'>
+          {post.content}
+        </p>
 
-        <footer className='mt-4 flex max-w-md items-center gap-4'>
+        <footer className='relative z-20 mt-4 flex max-w-md items-center gap-4'>
           <ActionButton
             label='좋아요'
             count={likeCount}
@@ -137,6 +141,12 @@ export default function Post ({
             <ShareIcon className='h-5 w-5' />
           </ActionButton>
         </footer>
+        {inDetailView && (
+          <div className='mt-4 text-sm text-gray-500'>
+            <p>{createdAt.toLocaleString()}에 작성됨</p>
+            {updatedAt && <p>{updatedAt.toLocaleString()}에 수정됨</p>}
+          </div>
+        )}
       </div>
     </article>
   )

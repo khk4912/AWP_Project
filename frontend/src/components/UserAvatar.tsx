@@ -1,9 +1,11 @@
 import type { CSSProperties } from 'react'
+import Link from 'next/link'
 
 import { getInitial } from '@/lib/format'
 
 type UserAvatarProps = {
   name: string
+  userId?: string
   seed?: string
   size?: number
   className?: string
@@ -34,6 +36,7 @@ function hashString (value: string): number {
 
 export default function UserAvatar ({
   name,
+  userId,
   seed = name,
   size = 40,
   className = '',
@@ -48,7 +51,7 @@ export default function UserAvatar ({
     boxShadow: `inset 0 0 0 1px ${palette.ring}`,
   } as CSSProperties
 
-  return (
+  const avatar = (
     <span
       aria-label={`${label} 프로필 이미지`}
       className={`inline-flex h-[var(--avatar-size)] w-[var(--avatar-size)] shrink-0 items-center justify-center rounded-full text-sm font-semibold ${className}`}
@@ -56,5 +59,17 @@ export default function UserAvatar ({
     >
       {getInitial(label)}
     </span>
+  )
+
+  if (userId == null || userId.length === 0) return avatar
+
+  return (
+    <Link
+      href={`/profile/${userId}`}
+      aria-label={`${label} 프로필로 이동`}
+      className='inline-flex shrink-0 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
+    >
+      {avatar}
+    </Link>
   )
 }

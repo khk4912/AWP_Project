@@ -33,13 +33,14 @@ function NavbarMenu ({ href, icon, label }: NavbarMenuProps) {
 type AccountMenuProps = {
   name: string
   username: string
+  userId: string
 }
 
-function AccountMenu ({ name, username }: AccountMenuProps) {
+function AccountMenu ({ name, username, userId }: AccountMenuProps) {
   return (
     <div className='mt-auto pt-4 border-gray-200'>
       <Link href='/profile' className='flex items-center gap-4 text-gray-700 hover:text-gray-900'>
-        <UserAvatar name={name} seed={username} size={40} />
+        <UserAvatar name={name} userId={userId} seed={userId} size={40} />
         <span className='min-w-0'>
           <span className='block truncate font-medium'>{name}</span>
           <span className='block truncate text-sm text-gray-500'>@{username}</span>
@@ -63,6 +64,7 @@ export default function DesktopSidebar () {
       <AccountMenu
         name={mockCurrentUser.username}
         username={mockCurrentUser.email ?? 'you'}
+        userId={mockCurrentUser._id}
       />
     </aside>
   )

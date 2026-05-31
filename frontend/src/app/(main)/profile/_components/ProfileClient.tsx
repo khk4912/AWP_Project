@@ -1,9 +1,13 @@
 import UserAvatar from '@/components/UserAvatar'
 import { mockCurrentUser, mockFollowRelations } from '@/lib/mock'
+import type { UserProfile } from '@/lib/types'
 
-export default function ProfileClient () {
-  const profile = mockCurrentUser
-  const relations = mockFollowRelations
+type ProfileClientProps = {
+  profile?: UserProfile
+}
+
+export default function ProfileClient ({ profile = mockCurrentUser }: ProfileClientProps) {
+  const relations = profile._id === mockCurrentUser._id ? mockFollowRelations : null
 
   return (
     <div className='border-b border-gray-200 px-4 py-6'>
