@@ -5,6 +5,7 @@ import { getAuthToken, getUserIdFromToken } from '@/lib/auth'
 import type { Comment, FollowRelations, Post, PostsResponse, UserProfile, UserSummary } from '@/lib/types'
 
 const backendUrl = process.env.BACKEND_URL ?? 'http://localhost:3000'
+const USER_POSTS_PAGE_SIZE = 50
 
 function isRecord (value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null
@@ -74,6 +75,22 @@ export async function getPosts (skip = 0, limit = 10): Promise<PostsResponse> {
   }
 
   return res.json() as Promise<PostsResponse>
+}
+
+export async function getUserPosts (userId: string): Promise<Post[]> {
+  const posts: Post[] = []
+  let skip = 0
+  let hasMore = true
+
+  while (hasMore) {
+    const response = await getPosts(skip, USER_POSTS_PAGE_SIZE)
+    posts.push(...response.posts.filter((post) => post.author._id === userId))
+
+    hasMore = response.pagination.hasMore && response.posts.length > 0
+    skip += response.posts.length
+  }
+
+  return posts
 }
 
 export async function getFollowingPosts (skip = 0, limit = 10): Promise<PostsResponse> {
