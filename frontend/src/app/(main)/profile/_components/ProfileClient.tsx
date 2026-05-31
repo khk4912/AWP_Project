@@ -21,20 +21,20 @@ export default function ProfileClient ({ currentUserId, profile, relations }: Pr
   ))
   const [followerCount, setFollowerCount] = useState(relations?.followerCount ?? profile.followers?.length ?? 0)
   const followMutation = useMutation({
-    mutationFn: async () => {
-      if (isFollowing) {
+    mutationFn: async ({ following }: { following: boolean }) => {
+      if (following) {
         await unfollowUser(profile._id)
       } else {
         await followUser(profile._id)
       }
     },
-    onMutate: () => {
-      setIsFollowing((value) => !value)
-      setFollowerCount((count) => count + (isFollowing ? -1 : 1))
+    onMutate: ({ following }) => {
+      setIsFollowing(!following)
+      setFollowerCount((count) => Math.max(0, count + (following ? -1 : 1)))
     },
-    onError: () => {
-      setIsFollowing((value) => !value)
-      setFollowerCount((count) => count + (isFollowing ? 1 : -1))
+    onError: (_error, { following }) => {
+      setIsFollowing(following)
+      setFollowerCount((count) => Math.max(0, count + (following ? 1 : -1)))
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['posts'] }).catch(() => {
@@ -53,9 +53,9 @@ export default function ProfileClient ({ currentUserId, profile, relations }: Pr
               type='button'
               disabled={followMutation.isPending}
               className={`rounded-full px-5 py-2 text-sm font-bold disabled:cursor-not-allowed disabled:opacity-60 ${isFollowing ? 'bg-white text-gray-950 ring-1 ring-gray-300 hover:bg-gray-50' : 'bg-gray-950 text-white hover:bg-gray-800'}`}
-              onClick={() => followMutation.mutate()}
+              onClick={() => followMutation.mutate({ following: isFollowing })}
             >
-              {isFollowing ? '팔로잉' : '팔로우'}
+              {followMutation.isPending ? '처리 중' : isFollowing ? '팔로잉' : '팔로우'}
             </button>
             )
           : null}
@@ -78,6 +78,9 @@ export default function ProfileClient ({ currentUserId, profile, relations }: Pr
           <dd><strong>{followerCount}</strong> 팔로워</dd>
         </div>
       </dl>
+      {followMutation.isError
+        ? <p className='mt-3 text-sm font-medium text-red-500'>팔로우 상태를 변경하지 못했습니다.</p>
+        : null}
     </div>
   )
 }
