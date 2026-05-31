@@ -219,12 +219,12 @@ export default function Post ({
 
           {isOwnPost
             ? (
-              <div ref={menuRef} className='relative z-30 -mr-2 -mt-1'>
+              <div ref={menuRef} className='relative z-20 -mr-2 -mt-1'>
                 <button
                   type='button'
                   aria-label='게시글 메뉴'
                   aria-expanded={isMenuOpen}
-                  className='inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-gray-400 hover:bg-gray-100 hover:text-gray-700'
+                  className='inline-flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-full text-gray-400 hover:bg-gray-100 hover:text-gray-700'
                   onClick={() => {
                     setIsMenuOpen((open) => !open)
                     onMore?.(post)
