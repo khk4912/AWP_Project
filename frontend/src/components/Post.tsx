@@ -263,7 +263,7 @@ export default function Post ({
             : null}
         </header>
 
-        <p className='mt-1 whitespace-pre-wrap leading-6 text-gray-950'>
+        <p className='mt-1 whitespace-pre-wrap break-words leading-6 text-gray-950'>
           {post.content}
         </p>
 

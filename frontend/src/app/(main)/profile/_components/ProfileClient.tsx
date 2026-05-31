@@ -157,7 +157,7 @@ export default function ProfileClient ({ currentUserId, profile, relations }: Pr
         <h2 className='text-xl font-bold text-gray-950'>{profile.username}</h2>
         <p className='text-sm text-gray-500'>{profile.email ?? '@you'}</p>
         {profile.bio != null && profile.bio.length > 0
-          ? <p className='mt-3 whitespace-pre-wrap text-gray-950'>{profile.bio}</p>
+          ? <p className='mt-3 whitespace-pre-wrap break-words text-gray-950'>{profile.bio}</p>
           : null}
       </div>
       <dl className='mt-4 flex gap-5 text-sm'>
