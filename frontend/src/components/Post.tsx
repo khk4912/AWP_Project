@@ -217,7 +217,7 @@ export default function Post ({
 
           {isOwnPost
             ? (
-              <div ref={menuRef} className='relative z-50 -mr-2 -mt-1'>
+              <div ref={menuRef} className='relative z-[60] -mr-2 -mt-1'>
                 <button
                   type='button'
                   aria-label='게시글 메뉴'
@@ -232,7 +232,7 @@ export default function Post ({
                 </button>
 
                 {isMenuOpen && (
-                  <div className='absolute right-0 top-9 z-50 w-36 overflow-hidden rounded-lg border border-gray-200 bg-white py-1 shadow-lg'>
+                  <div className='absolute right-0 top-9 z-[60] w-36 overflow-hidden rounded-lg border border-gray-200 bg-white py-1 shadow-lg'>
                     <Link
                       href={`/post/${post._id}/edit`}
                       className='block px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50'
