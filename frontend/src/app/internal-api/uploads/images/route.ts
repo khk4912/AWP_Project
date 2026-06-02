@@ -9,7 +9,9 @@ import { requireAuthToken } from '@/lib/auth'
 export const runtime = 'nodejs'
 
 const MAX_FILE_COUNT = 10
-const MAX_FILE_SIZE = 5 * 1024 * 1024
+const MAX_FILE_SIZE = 20 * 1024 * 1024
+const MAX_TOTAL_UPLOAD_SIZE = 100 * 1024 * 1024
+
 const allowedExtensions = new Map([
   ['image/gif', 'gif'],
   ['image/jpeg', 'jpg'],
@@ -34,6 +36,12 @@ export async function POST (request: Request) {
     return NextResponse.json({ message: 'No image files uploaded' }, { status: 400 })
   }
 
+  const totalUploadSize = files.reduce((total, file) => total + file.size, 0)
+
+  if (totalUploadSize > MAX_TOTAL_UPLOAD_SIZE) {
+    return NextResponse.json({ message: 'Total upload size must be 100MB or less' }, { status: 400 })
+  }
+
   const uploadDir = path.join(process.cwd(), 'public', 'uploads', 'posts')
   await mkdir(uploadDir, { recursive: true })
 
@@ -43,7 +51,7 @@ export async function POST (request: Request) {
     const extension = allowedExtensions.get(file.type)
 
     if (extension == null || file.size > MAX_FILE_SIZE) {
-      return NextResponse.json({ message: 'Only image files up to 5MB are allowed' }, { status: 400 })
+      return NextResponse.json({ message: 'Only image files up to 20MB are allowed' }, { status: 400 })
     }
 
     const filename = `${Date.now()}-${randomUUID()}.${extension}`
