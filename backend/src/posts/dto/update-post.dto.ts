@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsOptional, IsString, MinLength } from 'class-validator';
+import { IsArray, IsOptional, IsString, MinLength } from 'class-validator';
 
 export class UpdatePostDto {
   @ApiProperty({ example: '수정된 게시글 내용', required: false })
@@ -8,8 +8,9 @@ export class UpdatePostDto {
   @MinLength(1)
   content?: string;
 
-  @ApiProperty({ example: 'updated-image.png', required: false })
+  @ApiProperty({ example: [], required: false })
   @IsOptional()
-  @IsString()
-  imageUrl?: string;
+  @IsArray()
+  @IsString({ each: true })
+  imageUrls?: string[];
 }

@@ -12,8 +12,8 @@ export class Post {
   @Prop({ required: true })
   content!: string;
 
-  @Prop({ default: '' })
-  imageUrl!: string;
+  @Prop({ type: [String], default: [] })
+  imageUrls!: string[];
 
   @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }], default: [] })
   likedBy!: User[];

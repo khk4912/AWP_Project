@@ -13,11 +13,11 @@ export class PostsService {
     @InjectModel(Comment.name) private readonly commentModel: Model<CommentDocument>,
   ) {}
 
-  async create(postData: { author: string; content: string; imageUrl?: string }) {
+  async create(postData: { author: string; content: string; imageUrls?: string[] }) {
     const newPost = new this.postModel({
       author: postData.author,
       content: postData.content,
-      imageUrl: postData.imageUrl ?? '',
+      imageUrls: postData.imageUrls ?? [],
     });
     const saved = await newPost.save();
     return {
@@ -57,7 +57,7 @@ export class PostsService {
     return post;
   }
 
-  async update(id: string, userId: string, data: { content?: string; imageUrl?: string }) {
+  async update(id: string, userId: string, data: { content?: string; imageUrls?: string[] }) {
     const post = await this.postModel.findById(id).exec();
     if (!post) {
       throw new NotFoundException('Post not found.');
@@ -66,7 +66,7 @@ export class PostsService {
       throw new ForbiddenException('You can only update your own post.');
     }
     if (data.content !== undefined) post.content = data.content;
-    if (data.imageUrl !== undefined) post.imageUrl = data.imageUrl;
+    if (data.imageUrls !== undefined) post.imageUrls = data.imageUrls;
     await post.save();
     return { message: 'Post updated successfully.' };
   }

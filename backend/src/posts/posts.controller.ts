@@ -1,5 +1,10 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post as HttpPost, Query, UseGuards } from '@nestjs/common';
+import * as fs from 'fs';
+import * as path from 'path';
+import { Body, Controller, Delete, Get, Param, Patch, Post as HttpPost, Query, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
+import { FilesInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { diskStorage } from 'multer';
+import { extname } from 'path';
 import { User } from '../common/decorators/user.decorator';
 import { JwtPayload } from '../common/interfaces/jwt-payload.interface';
 import { JwtGuard } from '../auth/guards/jwt.guard';
@@ -12,6 +17,35 @@ import { PostsService } from './posts.service';
 export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
+  @ApiOperation({ summary: '이미지 업로드' })
+  @ApiBearerAuth()
+  @UseGuards(JwtGuard)
+  @HttpPost('upload')
+  @UseInterceptors(FilesInterceptor('files', 5, {
+    storage: diskStorage({
+      destination: (req, file, cb) => {
+        const dir = path.join(process.cwd(), 'uploads', 'posts');
+        fs.mkdirSync(dir, { recursive: true });
+        cb(null, dir);
+      },
+      filename: (req, file, cb) => {
+        const unique = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+        cb(null, `${unique}${extname(file.originalname)}`);
+      },
+    }),
+    fileFilter: (req, file, cb) => {
+      if (file.mimetype.startsWith('image/')) {
+        cb(null, true);
+      } else {
+        cb(new Error('이미지 파일만 업로드할 수 있습니다.'), false);
+      }
+    },
+  }))
+  async uploadImages(@UploadedFiles() files: Express.Multer.File[]) {
+    const urls = files.map((f) => `/api/uploads/posts/${f.filename}`);
+    return { urls };
+  }
+
   @ApiOperation({ summary: '게시글 작성' })
   @ApiBearerAuth()
   @UseGuards(JwtGuard)
@@ -20,7 +54,7 @@ export class PostsController {
     return this.postsService.create({
       author: user.userId,
       content: dto.content,
-      imageUrl: dto.imageUrl,
+      imageUrls: dto.imageUrls,
     });
   }
 
