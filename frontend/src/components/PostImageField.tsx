@@ -54,32 +54,22 @@ export default function PostImageField ({
 
   return (
     <div className='mt-3'>
-      <div className='flex items-center gap-2'>
+      <input type='hidden' name={name} value={imageUrl} />
+      <label className={`inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-gray-700 transition hover:bg-gray-100 hover:text-gray-950 ${disabled || isUploading ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'}`}>
+        <span className='sr-only'>이미지 업로드</span>
+        {isUploading ? <Loader2Icon className='h-5 w-5 animate-spin' /> : <ImagePlusIcon className='h-5 w-5' />}
         <input
-          type='text'
-          name={name}
-          value={imageUrl}
+          type='file'
+          accept='image/*'
+          multiple
           disabled={disabled || isUploading}
-          placeholder='이미지 URL'
-          className='min-w-0 flex-1 rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-950 outline-none transition focus:border-blue-500 focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100 disabled:text-gray-500'
-          onChange={(event) => commitValue(event.target.value)}
+          className='hidden'
+          onChange={(event) => {
+            handleUpload(event.target.files).catch(() => setError('이미지를 업로드하지 못했습니다.'))
+            event.target.value = ''
+          }}
         />
-        <label className='inline-flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-full text-gray-700 transition hover:bg-gray-100 hover:text-gray-950'>
-          <span className='sr-only'>이미지 업로드</span>
-          {isUploading ? <Loader2Icon className='h-5 w-5 animate-spin' /> : <ImagePlusIcon className='h-5 w-5' />}
-          <input
-            type='file'
-            accept='image/*'
-            multiple
-            disabled={disabled || isUploading}
-            className='hidden'
-            onChange={(event) => {
-              handleUpload(event.target.files).catch(() => setError('이미지를 업로드하지 못했습니다.'))
-              event.target.value = ''
-            }}
-          />
-        </label>
-      </div>
+      </label>
       {error.length > 0 ? <p className='mt-2 text-sm font-medium text-red-500'>{error}</p> : null}
       <PostImageSlider imageUrl={imageUrl} alt='게시글 이미지 미리보기' />
     </div>
