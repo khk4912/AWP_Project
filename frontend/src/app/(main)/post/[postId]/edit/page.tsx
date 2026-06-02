@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
+import PostImageField from '@/components/PostImageField'
 import { getAuthToken, getUserIdFromToken } from '@/lib/auth'
 import { getPost } from '@/lib/server/api'
 
@@ -37,6 +38,7 @@ export default async function EditPostPage ({ params }: EditPostPageProps) {
           rows={8}
           className='min-h-40 w-full resize-y rounded-lg border border-gray-200 px-4 py-3 text-base leading-6 text-gray-950 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500'
         />
+        <PostImageField defaultValue={post.imageUrl} />
 
         <div className='mt-4 flex justify-end gap-2'>
           <Link

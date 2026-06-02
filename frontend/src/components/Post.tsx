@@ -6,6 +6,7 @@ import { HeartIcon, MessageCircleIcon, MoreHorizontalIcon } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 
+import PostImageSlider from './PostImageSlider'
 import UserAvatar from './UserAvatar'
 import { likePost, unlikePost } from '@/lib/api'
 import { relativeTime } from '@/lib/format'
@@ -267,19 +268,7 @@ export default function Post ({
           {post.content}
         </p>
 
-        {post.imageUrl.length > 0
-          ? (
-            <div className='mt-3 overflow-hidden rounded-2xl border border-gray-200'>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={post.imageUrl}
-                alt={`${authorName}님의 게시글 이미지`}
-                className='max-h-[28rem] w-full object-cover'
-                loading='lazy'
-              />
-            </div>
-            )
-          : null}
+        <PostImageSlider imageUrl={post.imageUrl} alt={`${authorName}님의 게시글 이미지`} />
 
         <footer className='relative z-20 mt-4 flex max-w-xs items-center gap-2'>
           <ActionButton

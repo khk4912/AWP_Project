@@ -4,7 +4,9 @@ import { useRef, useState } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
 
+import PostImageField from '@/components/PostImageField'
 import UserAvatar from '@/components/UserAvatar'
+import { serializePostImageUrls } from '@/lib/post-images'
 import { createPost } from '@/lib/api'
 import type { UserProfile } from '@/lib/types'
 
@@ -27,10 +29,12 @@ export default function PostComposer ({ variant = 'feed', currentUser, onCreated
   const queryClient = useQueryClient()
   const formRef = useRef<HTMLFormElement | null>(null)
   const [content, setContent] = useState('')
+  const [imageUrl, setImageUrl] = useState('')
   const mutation = useMutation({
     mutationFn: createPost,
     onSuccess: () => {
       setContent('')
+      setImageUrl('')
       formRef.current?.reset()
       queryClient.invalidateQueries({ queryKey: ['posts'] }).catch(() => {
         // The feed also refreshes after navigation.
@@ -59,7 +63,10 @@ export default function PostComposer ({ variant = 'feed', currentUser, onCreated
         event.preventDefault()
         if (isSubmitDisabled) return
 
-        mutation.mutate({ content: trimmedContent })
+        mutation.mutate({
+          content: trimmedContent,
+          imageUrl: serializePostImageUrls(imageUrl.split(';')),
+        })
       }}
     >
       <UserAvatar
@@ -80,6 +87,11 @@ export default function PostComposer ({ variant = 'feed', currentUser, onCreated
         {mutation.isError
           ? <p className='mt-2 text-sm font-medium text-red-500'>게시글 작성에 실패했습니다.</p>
           : null}
+        <PostImageField
+          value={imageUrl}
+          disabled={mutation.isPending}
+          onChange={setImageUrl}
+        />
       </div>
       <button
         type='submit'

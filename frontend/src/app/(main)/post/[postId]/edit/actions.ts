@@ -14,6 +14,7 @@ function getStringField (formData: FormData, name: string): string {
 export async function updatePostAction (formData: FormData) {
   const postId = getStringField(formData, 'postId')
   const content = getStringField(formData, 'content').trim()
+  const imageUrl = getStringField(formData, 'imageUrl')
 
   if (postId.length === 0 || content.length === 0) {
     throw new Error('Post content is required')
@@ -27,7 +28,7 @@ export async function updatePostAction (formData: FormData) {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify({ content }),
+    body: JSON.stringify({ content, imageUrl }),
   })
 
   if (!response.ok) {

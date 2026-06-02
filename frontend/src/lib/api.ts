@@ -49,6 +49,23 @@ export async function createPost ({ content, imageUrl = '' }: CreatePostInput): 
   }
 }
 
+export async function uploadPostImages (files: File[]): Promise<string[]> {
+  const formData = new FormData()
+  files.forEach((file) => formData.append('images', file))
+
+  const response = await fetch('/internal-api/uploads/images', {
+    method: 'POST',
+    body: formData,
+  })
+
+  if (!response.ok) {
+    throw new Error('Failed to upload images')
+  }
+
+  const body = await response.json() as { urls?: unknown }
+  return Array.isArray(body.urls) ? body.urls.filter((url): url is string => typeof url === 'string') : []
+}
+
 export async function likePost (postId: string): Promise<void> {
   const response = await fetch(`/internal-api/posts/${postId}/like`, {
     method: 'POST',
