@@ -207,7 +207,7 @@ export default function Post ({
       </div>
 
       <div className='min-w-0 flex-1'>
-        <header className='relative z-50 flex items-start justify-between gap-3'>
+        <header className='flex items-start justify-between gap-3'>
           <div className='min-w-0'>
             <div className='flex min-w-0 items-center gap-2'>
               <h2 className='truncate text-base font-bold text-gray-950'>{authorName}</h2>
